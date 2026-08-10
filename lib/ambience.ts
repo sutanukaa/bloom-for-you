@@ -140,6 +140,14 @@ export function startAmbience() {
   localStorage.setItem("bloom-ambience", "1");
 }
 
+// duck the garden while a tucked-in song plays, then bring it back
+export function duckAmbience() {
+  if (running && ctx && master) master.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.8);
+}
+export function unduckAmbience() {
+  if (running && ctx && master) master.gain.linearRampToValueAtTime(1, ctx.currentTime + 1.5);
+}
+
 export function stopAmbience() {
   running = false;
   if (birdTimer) clearTimeout(birdTimer);

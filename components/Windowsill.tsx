@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Plant } from "@/components/Plant";
 import { stageAt, timeLeft, type Flower, type Stage } from "@/lib/seed";
+import { duckAmbience, unduckAmbience } from "@/lib/ambience";
 
 /* eslint-disable @next/next/no-img-element */
 
@@ -15,13 +16,43 @@ function SongCard({ song }: { song: Song }) {
   const audio = useRef<HTMLAudioElement | null>(null);
   const [playing, setPlaying] = useState(false);
 
-  function toggle() {
+  function ensureAudio(): HTMLAudioElement {
     if (!audio.current) {
       audio.current = new Audio(song.preview);
-      audio.current.onended = () => setPlaying(false);
+      audio.current.onended = () => {
+        setPlaying(false);
+        unduckAmbience(); // the garden comes back when the song ends
+      };
     }
-    if (playing) audio.current.pause();
-    else audio.current.play().catch(() => setPlaying(false));
+    return audio.current;
+  }
+
+  // the song starts on its own when the card appears (right after "open the
+  // note", so the click's user-activation still covers autoplay) — and the
+  // garden ambience steps aside for it
+  useEffect(() => {
+    if (!song.preview) return;
+    const a = ensureAudio();
+    duckAmbience();
+    a.play()
+      .then(() => setPlaying(true))
+      .catch(() => unduckAmbience()); // autoplay refused → garden keeps singing
+    return () => {
+      a.pause();
+      unduckAmbience();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function toggle() {
+    const a = ensureAudio();
+    if (playing) {
+      a.pause();
+      unduckAmbience();
+    } else {
+      duckAmbience();
+      a.play().catch(() => unduckAmbience());
+    }
     setPlaying(!playing);
   }
 
