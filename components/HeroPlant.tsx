@@ -8,7 +8,8 @@ import { plantSrc, plantWidth } from "@/components/Plant";
 // the pot never moves — reads as one plant growing. Bloom holds a while,
 // then it fades back to soil as the next flower.
 const STAGES: { stage: Stage; hold: number }[] = [
-  { stage: "seed", hold: 1300 },
+  { stage: "seed", hold: 1900 }, // long enough for the outgoing bloom's slow dissolve
+
   { stage: "sprout", hold: 1300 },
   { stage: "seedling", hold: 1300 },
   { stage: "bud", hold: 1500 },
@@ -25,7 +26,7 @@ export function HeroPlant() {
     // crossfade is 700ms) — swapping at the wrap flashed the next flower
     // on the still-visible outgoing bloom
     const wrapped = i > 0 && i % STAGES.length === 0;
-    const f = wrapped ? setTimeout(() => setFlowerIdx((n) => n + 1), 750) : undefined;
+    const f = wrapped ? setTimeout(() => setFlowerIdx((n) => n + 1), 1600) : undefined;
     return () => {
       clearTimeout(t);
       if (f) clearTimeout(f);
@@ -49,12 +50,15 @@ export function HeroPlant() {
             src={plantSrc(stage, flower)}
             alt=""
             draggable={false}
-            className="absolute bottom-0 left-1/2 h-auto transition-all duration-700 ease-out"
+            className="absolute bottom-0 left-1/2 h-auto transition-all ease-out"
             style={{
               width: plantWidth(stage, flower, 118),
               transform: `translateX(-50%) scale(${s === step ? 1 : 0.96})`,
               transformOrigin: "50% 100%",
               opacity: s === step ? 1 : 0,
+              // frames fade IN briskly but linger on the way OUT — the slow
+              // dissolve softens the bloom→soil reset most of all
+              transitionDuration: s === step ? "700ms" : "1500ms",
             }}
           />
         ))}
