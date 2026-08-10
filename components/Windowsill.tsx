@@ -1,9 +1,54 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Plant } from "@/components/Plant";
 import { stageAt, timeLeft, type Flower, type Stage } from "@/lib/seed";
+
+/* eslint-disable @next/next/no-img-element */
+
+type Media = { type: "image" | "video"; url: string };
+type Song = { title: string; artist: string; artwork: string; preview: string; link: string };
+
+// the song that came sealed with the note, on a little record-sleeve card
+function SongCard({ song }: { song: Song }) {
+  const audio = useRef<HTMLAudioElement | null>(null);
+  const [playing, setPlaying] = useState(false);
+
+  function toggle() {
+    if (!audio.current) {
+      audio.current = new Audio(song.preview);
+      audio.current.onended = () => setPlaying(false);
+    }
+    if (playing) audio.current.pause();
+    else audio.current.play().catch(() => setPlaying(false));
+    setPlaying(!playing);
+  }
+
+  return (
+    <div className="unfold paper-card flex items-center gap-3 mt-4 bg-[#fffdf8] border border-ink/10 rounded-2xl p-3 pr-4 shadow-[3px_6px_14px_rgba(74,64,56,0.18)] max-w-sm w-full">
+      <img src={song.artwork} alt="" className="w-14 h-14 rounded-xl shrink-0" />
+      <div className="flex-1 min-w-0 text-left">
+        <p className="text-ink truncate">{song.title}</p>
+        <p className="text-ink-soft text-sm truncate">{song.artist}</p>
+        {song.link ? (
+          <a href={song.link} target="_blank" rel="noopener noreferrer" className="text-ink-soft/80 text-xs underline underline-offset-2 hover:text-ink">
+            open in your music app ↗
+          </a>
+        ) : null}
+      </div>
+      {song.preview ? (
+        <button
+          onClick={toggle}
+          aria-label={playing ? "pause" : "play"}
+          className="shrink-0 w-11 h-11 rounded-full bg-sage/70 hover:bg-sage flex items-center justify-center text-lg cursor-pointer transition-colors"
+        >
+          {playing ? "⏸" : "▶"}
+        </button>
+      ) : null}
+    </div>
+  );
+}
 
 // sprouts that take root as waterings accumulate — each threshold adds one
 const WATERED_SPROUTS: { at: number; src: string; pos: React.CSSProperties; h: number }[] = [
@@ -32,6 +77,8 @@ export function Windowsill({
   to,
   waterings: initialWaterings,
   note,
+  media = null,
+  song = null,
   bloomedOthers = 0,
   isPublic = false,
 }: {
@@ -43,6 +90,8 @@ export function Windowsill({
   to: string;
   waterings: number;
   note: string | null;
+  media?: Media | null;
+  song?: Song | null;
   bloomedOthers?: number;
   isPublic?: boolean;
 }) {
@@ -202,12 +251,22 @@ export function Windowsill({
           open the note ✉
         </button>
       ) : (
-        <div className="unfold relative mt-6 bg-[#fffdf8] border border-ink/10 rounded-sm px-8 py-6 shadow-[3px_6px_14px_rgba(74,64,56,0.18)] max-w-sm">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/dandelion.png" alt="" className="absolute -top-3 -right-3 w-8 pointer-events-none" />
-          <p className="hand text-2xl text-[#2e3b2e] whitespace-pre-wrap text-left leading-snug">{note}</p>
-          {from.trim() ? <p className="hand text-xl text-[#64735f] text-right mt-4">— {from}</p> : null}
-        </div>
+        <>
+          <div className="unfold relative mt-6 bg-[#fffdf8] border border-ink/10 rounded-sm px-8 py-6 shadow-[3px_6px_14px_rgba(74,64,56,0.18)] max-w-sm">
+            <img src="/dandelion.png" alt="" className="absolute -top-3 -right-3 w-8 pointer-events-none" />
+            {/* whatever was tucked in with the note, taped above the words */}
+            {media ? (
+              media.type === "video" ? (
+                <video src={media.url} controls playsInline className="w-full rounded-[3px] mb-4 rotate-[0.5deg]" />
+              ) : (
+                <img src={media.url} alt="" className="w-full rounded-[3px] mb-4 rotate-[0.5deg]" />
+              )
+            ) : null}
+            <p className="hand text-2xl text-[#2e3b2e] whitespace-pre-wrap text-left leading-snug">{note}</p>
+            {from.trim() ? <p className="hand text-xl text-[#64735f] text-right mt-4">— {from}</p> : null}
+          </div>
+          {song ? <SongCard song={song} /> : null}
+        </>
       )}
 
       {/* the invitation: may this flower live in the public garden? */}

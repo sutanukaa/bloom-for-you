@@ -8,8 +8,12 @@ create table if not exists seeds (
   flower text not null default 'sunflower',
   waterings int not null default 0,
   blooms_at timestamptz not null default now() + interval '3 days',
-  public boolean not null default false
+  public boolean not null default false,
+  media jsonb,  -- {type: 'image'|'video', url} — revealed only at bloom
+  song jsonb    -- {title, artist, artwork, preview, link} — revealed only at bloom
 );
+-- migration: alter table seeds add column if not exists media jsonb; alter table seeds add column if not exists song jsonb;
+-- storage: the 'seed-media' public bucket is auto-created by the API on first upload.
 
 -- whether the bloomed flower is shown in the public garden (names only, never the note)
 -- migration: alter table seeds add column if not exists public boolean not null default false;

@@ -9,7 +9,7 @@ export default async function SeedPage({ params }: { params: Promise<{ id: strin
 
   const { data } = await supabaseAdmin
     .from("seeds")
-    .select("created_at, blooms_at, from_name, to_name, note, flower, waterings, public")
+    .select("created_at, blooms_at, from_name, to_name, note, flower, waterings, public, media, song")
     .eq("id", id)
     .single();
   if (!data) notFound();
@@ -36,8 +36,10 @@ export default async function SeedPage({ params }: { params: Promise<{ id: strin
         from={data.from_name}
         to={data.to_name}
         waterings={data.waterings}
-        // the note stays on the server until the plant has actually bloomed
+        // the note (and anything tucked in with it) stays on the server until bloom
         note={bloomed ? data.note : null}
+        media={bloomed ? data.media : null}
+        song={bloomed ? data.song : null}
         bloomedOthers={bloomedOthers}
         isPublic={data.public}
       />

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { FLOWERS, MIN_BLOOM_MS, type Flower } from "@/lib/seed";
 import { Plant } from "@/components/Plant";
+import { SongPicker, stopPreview, type Song } from "@/components/SongPicker";
 
 const FLOWER_LABELS: Record<Flower, string> = {
   sunflower: "sunflower ☀",
@@ -18,6 +19,9 @@ export function PlantForm() {
   const [flower, setFlower] = useState<Flower>("sunflower");
   const [amount, setAmount] = useState(3);
   const [unit, setUnit] = useState<"minutes" | "hours" | "days">("days");
+  const [song, setSong] = useState<Song | null>(null);
+  const [media, setMedia] = useState<File | null>(null);
+  const [mediaPreview, setMediaPreview] = useState("");
   const [busy, setBusy] = useState(false);
   const [link, setLink] = useState("");
   const [copied, setCopied] = useState(false);
@@ -27,15 +31,26 @@ export function PlantForm() {
   const bloomMs = amount * UNIT_MS[unit];
   const tooShort = bloomMs < MIN_BLOOM_MS;
 
+  function pickMedia(f: File | null) {
+    if (mediaPreview) URL.revokeObjectURL(mediaPreview);
+    setMedia(f);
+    setMediaPreview(f ? URL.createObjectURL(f) : "");
+  }
+
   async function plant() {
     setBusy(true);
     setError("");
+    stopPreview();
     try {
-      const res = await fetch("/api/seeds", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ from, to, note, flower, bloomMs }),
-      });
+      const form = new FormData();
+      form.set("from", from);
+      form.set("to", to);
+      form.set("note", note);
+      form.set("flower", flower);
+      form.set("bloomMs", String(bloomMs));
+      if (song) form.set("song", JSON.stringify(song));
+      if (media) form.set("media", media);
+      const res = await fetch("/api/seeds", { method: "POST", body: form });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "the seed didn't take — try again?");
       setLink(`${window.location.origin}/p/${data.id}`);
@@ -95,6 +110,47 @@ export function PlantForm() {
           className="mt-1 w-full bg-[#fffdf8] border border-ink/15 rounded-lg px-3 py-2 text-ink resize-none"
         />
       </label>
+
+      <div className="text-left">
+        <span className="hand text-xl text-ink">tuck something in with the note</span>
+        <p className="text-ink-soft/70 text-sm">a photo, a little video, a song — they stay sealed until it blooms (all optional)</p>
+        <div className="mt-2 flex flex-col gap-2">
+          {media ? (
+            <div className="flex items-center gap-3 bg-cream/70 border border-ink/10 rounded-2xl p-2 pr-3">
+              {media.type.startsWith("video/") ? (
+                <video src={mediaPreview} className="w-12 h-12 rounded-xl object-cover" muted />
+              ) : (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={mediaPreview} alt="" className="w-12 h-12 rounded-xl object-cover" />
+              )}
+              <p className="flex-1 min-w-0 text-left text-ink-soft text-sm truncate">{media.name}</p>
+              <button onClick={() => pickMedia(null)} aria-label="remove file" className="text-ink-soft hover:text-ink text-xl cursor-pointer">
+                ✕
+              </button>
+            </div>
+          ) : (
+            <label className="inline-flex items-center gap-2 bg-[#fffdf8] border border-ink/15 border-dashed rounded-lg px-3 py-2 text-ink-soft hover:text-ink cursor-pointer w-fit">
+              📷 add a photo or video
+              <input
+                type="file"
+                accept="image/*,video/*"
+                className="hidden"
+                onChange={(e) => {
+                  const f = e.target.files?.[0] ?? null;
+                  e.target.value = "";
+                  if (f && f.size > 4 * 1024 * 1024) {
+                    setError("that file is a bit heavy — keep it under 4MB ♡");
+                    return;
+                  }
+                  setError("");
+                  pickMedia(f);
+                }}
+              />
+            </label>
+          )}
+          <SongPicker song={song} onPick={setSong} />
+        </div>
+      </div>
 
       <div className="text-left">
         <span className="hand text-xl text-ink">how long should it take to bloom?</span>
