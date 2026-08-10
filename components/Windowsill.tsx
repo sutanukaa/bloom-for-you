@@ -21,6 +21,7 @@ export function Windowsill({
   to,
   waterings: initialWaterings,
   note,
+  bloomedOthers = 0,
 }: {
   id: string;
   plantedAt: string;
@@ -30,6 +31,7 @@ export function Windowsill({
   to: string;
   waterings: number;
   note: string | null;
+  bloomedOthers?: number;
 }) {
   const [stage, setStage] = useState<Stage>(() => stageAt(plantedAt, bloomsAt));
   const [left, setLeft] = useState(() => timeLeft(bloomsAt));
@@ -37,6 +39,14 @@ export function Windowsill({
   const [watering, setWatering] = useState(false);
   const [wiggle, setWiggle] = useState(false);
   const [noteOpen, setNoteOpen] = useState(false);
+  const [joined, setJoined] = useState(false);
+
+  // a beat after the note unfolds, the garden welcomes the new flower
+  useEffect(() => {
+    if (!noteOpen) return;
+    const t = setTimeout(() => setJoined(true), 2200);
+    return () => clearTimeout(t);
+  }, [noteOpen]);
 
   // tick the countdown; if the bloom moment passes while they're watching,
   // reload so the server hands over the note
@@ -143,6 +153,31 @@ export function Windowsill({
           <img src="/dandelion.png" alt="" className="absolute -top-3 -right-3 w-8 pointer-events-none" />
           <p className="hand text-2xl text-[#2e3b2e] whitespace-pre-wrap text-left leading-snug">{note}</p>
           {from.trim() ? <p className="hand text-xl text-[#64735f] text-right mt-4">— {from}</p> : null}
+        </div>
+      )}
+
+      {/* …and then the garden takes the flower in */}
+      {joined && (
+        <div className="rise mt-8 flex flex-col items-center">
+          <div className="flex items-end gap-1">
+            {["/flower1.png", "/flower3.png", "/flower5.png", "/flower2.png", "/flower4.png"].map((src, i) => (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                key={src}
+                src={src}
+                alt=""
+                className="rise windy w-auto pointer-events-none"
+                style={{ height: `${34 + (i % 3) * 10}px`, animationDelay: `${0.15 + i * 0.18}s, ${i * 0.7}s` }}
+              />
+            ))}
+          </div>
+          <p className="hand text-2xl text-ink mt-3">
+            {bloomedOthers > 0 ? (
+              <>your flower has joined the garden, blooming alongside {bloomedOthers} other{bloomedOthers === 1 ? "" : "s"} ♡</>
+            ) : (
+              <>your flower is the very first bloom in the garden ♡</>
+            )}
+          </p>
         </div>
       )}
     </div>
