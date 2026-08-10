@@ -6,16 +6,16 @@ import Link from "next/link";
 export default function NotFound() {
   return (
     <main className="flex-1 flex flex-col items-center justify-center px-6 py-16 text-center">
-      <div className="rise relative">
-        <img src="/seed.png" alt="" className="w-36 mx-auto" />
-        <img src="/dandelion.png" alt="" className="bob absolute -top-4 -right-6 w-10" />
+      <div className="rise relative sway">
+        <img src="/sprout.png" alt="" className="w-36 mx-auto" />
+        <img src="/butterfly2.png" alt="" className="bob flap-img absolute -top-6 -right-8 w-9" />
       </div>
 
-      <h1 className="rise rise-1 hand text-ink text-6xl sm:text-7xl mt-6" style={{ textShadow: "0 1px 10px rgba(246,239,223,0.7)" }}>
-        oh no, 404
+      <h1 className="rise rise-1 hand text-ink text-5xl sm:text-6xl mt-6" style={{ textShadow: "0 1px 10px rgba(246,239,223,0.7)" }}>
+        you&apos;ve wandered off the path ♡
       </h1>
       <p className="rise rise-2 text-ink-soft text-xl mt-3 max-w-md" style={{ textShadow: "0 1px 8px rgba(246,239,223,0.6)" }}>
-        nothing has been planted here — just an empty pot and a lot of possibility.
+        nothing grows in this little corner — but the garden is just over the hedge, and something is always blooming there.
       </p>
 
       <div className="rise rise-3 flex flex-wrap items-center justify-center gap-4 mt-10">
