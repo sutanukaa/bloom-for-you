@@ -72,15 +72,17 @@ export function Windowsill({
         {to.trim() ? ` for ${to}` : " for you"} ♡
       </p>
 
-      {/* the windowsill: sky through the window, plant on the ledge */}
-      <div className="relative mt-6 rounded-t-[80px] rounded-b-xl border-[10px] border-terracotta/80 bg-sky/60 px-10 pt-10 pb-0 shadow-[4px_8px_20px_rgba(74,64,56,0.18)]">
+      {/* the plant lives right in the garden, with grass and wildflowers for company
+          (fixed height, bottom-anchored so nothing jumps between stages) */}
+      {/* eslint-disable @next/next/no-img-element */}
+      <div className="relative mt-4 flex items-end justify-center h-80 sm:h-[26rem] w-72 sm:w-96">
         {/* falling droplets while watering */}
         {watering && (
-          <div className="absolute top-8 left-1/2 -translate-x-1/2 z-10" aria-hidden>
+          <div className="absolute top-10 left-1/2 -translate-x-1/2 z-10" aria-hidden>
             {[0, 1, 2].map((i) => (
               <span
                 key={i}
-                className="drip absolute text-sky-700 text-lg"
+                className="drip absolute text-lg"
                 style={{ left: `${(i - 1) * 16}px`, animationDelay: `${i * 0.15}s`, color: "#6d9ec1" }}
               >
                 💧
@@ -88,12 +90,23 @@ export function Windowsill({
             ))}
           </div>
         )}
-        {/* fixed-height, bottom-anchored so the window doesn't resize between stages */}
-        <div className={`flex items-end justify-center h-80 sm:h-[26rem] ${wiggle ? "wiggle" : ""}`}>
+
+        {/* garden companions */}
+        <img src="/flower2.png" alt="" className="windy absolute bottom-0 left-2 h-24 sm:h-32 w-auto pointer-events-none" style={{ animationDelay: "0.6s" }} />
+        <img src="/grass.png" alt="" className="windy absolute bottom-0 left-14 h-12 sm:h-14 w-auto pointer-events-none" style={{ animationDelay: "1.2s" }} />
+        <img src="/flower5.png" alt="" className="windy absolute bottom-0 right-2 h-28 sm:h-36 w-auto pointer-events-none" style={{ animationDelay: "0.2s" }} />
+        <img src="/grass.png" alt="" className="windy absolute bottom-0 right-16 h-11 sm:h-13 w-auto pointer-events-none" style={{ animationDelay: "1.8s" }} />
+
+        {/* a butterfly keeps the bloomed flower company */}
+        {stage === "bloom" && (
+          <div className="bob absolute top-6 right-16 sm:right-24 pointer-events-none">
+            <img src="/butterfly1.png" alt="" className="flap-img w-9 sm:w-11" />
+          </div>
+        )}
+
+        <div className={wiggle ? "wiggle" : ""}>
           <Plant stage={stage} flower={flower} potPx={130} />
         </div>
-        {/* the sill */}
-        <div className="absolute -bottom-3 -left-6 -right-6 h-4 bg-terracotta/80 rounded-full shadow-[0_4px_8px_rgba(74,64,56,0.2)]" />
       </div>
 
       <p className="hand text-2xl text-ink mt-8">{STAGE_LINES[stage]}</p>
@@ -125,9 +138,11 @@ export function Windowsill({
           open the note ✉
         </button>
       ) : (
-        <div className="unfold mt-6 bg-[#fffdf8] border border-ink/10 rounded-sm px-8 py-6 shadow-[3px_6px_14px_rgba(74,64,56,0.18)] max-w-sm">
-          <p className="hand text-2xl text-ink whitespace-pre-wrap text-left leading-snug">{note}</p>
-          {from.trim() ? <p className="hand text-xl text-ink-soft text-right mt-4">— {from}</p> : null}
+        <div className="unfold relative mt-6 bg-[#fffdf8] border border-ink/10 rounded-sm px-8 py-6 shadow-[3px_6px_14px_rgba(74,64,56,0.18)] max-w-sm">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/dandelion.png" alt="" className="absolute -top-3 -right-3 w-8 pointer-events-none" />
+          <p className="hand text-2xl text-[#2e3b2e] whitespace-pre-wrap text-left leading-snug">{note}</p>
+          {from.trim() ? <p className="hand text-xl text-[#64735f] text-right mt-4">— {from}</p> : null}
         </div>
       )}
     </div>

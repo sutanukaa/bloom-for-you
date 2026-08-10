@@ -127,6 +127,13 @@ body {
 [data-garden="night"] select {
   color: #2e3b2e;
 }
+/* light paper cards keep daytime ink at night (they don't darken with the sky) */
+[data-garden="night"] .paper-card {
+  --ink: #2e3b2e;
+  --ink-soft: #64735f;
+  --sage-deep: #5f7f58;
+  --cream: #f6efdf;
+}
 
 /* stars twinkle */
 @keyframes twinkle { 0%, 100% { opacity: 0.25; } 50% { opacity: 1; } }
