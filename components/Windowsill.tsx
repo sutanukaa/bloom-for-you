@@ -139,27 +139,30 @@ export function Windowsill({
         </div>
       </div>
 
-      <p className="hand text-2xl text-ink mt-8">{STAGE_LINES[stage]}</p>
-      {stage !== "bloom" ? (
-        <p className="text-ink-soft mt-1">
-          blooms in {left || "a moment"} — there&apos;s a note inside, but it opens only when the flower does.
-        </p>
-      ) : null}
-
-      {stage !== "bloom" ? (
-        <>
-          <button
-            onClick={water}
-            disabled={watering}
-            className="mt-6 rounded-full bg-sage text-ink px-8 py-3 text-lg border border-sage-deep shadow-[3px_4px_0_0_rgba(109,143,107,0.4)] hover:-translate-y-0.5 hover:rotate-[-1deg] transition-transform disabled:opacity-60 cursor-pointer"
-          >
-            {watering ? "watering…" : "water it 🫗"}
-          </button>
-          <p className="text-ink-soft/70 text-sm mt-2">
+      {/* status on a soft paper pill — bare text drowns in the bushes behind it */}
+      <div className="paper-card bg-[#fffdf8]/80 backdrop-blur-sm border border-ink/10 rounded-2xl px-6 py-4 mt-8 shadow-[2px_4px_14px_rgba(46,59,46,0.12)]">
+        <p className="hand text-2xl text-ink">{STAGE_LINES[stage]}</p>
+        {stage !== "bloom" ? (
+          <p className="text-ink-soft mt-1">
+            blooms in {left || "a moment"} — there&apos;s a note inside, but it opens only when the flower does.
+          </p>
+        ) : null}
+        {stage !== "bloom" ? (
+          <p className="text-ink-soft/80 text-sm mt-2">
             {waterings === 0 ? "it hasn't been watered yet" : `watered ${waterings} time${waterings === 1 ? "" : "s"} with love`}
             {" "}· watering won&apos;t make it bloom sooner, but the patch around it grows greener ♡
           </p>
-        </>
+        ) : null}
+      </div>
+
+      {stage !== "bloom" ? (
+        <button
+          onClick={water}
+          disabled={watering}
+          className="mt-5 rounded-full bg-sage text-[#2e3b2e] px-8 py-3 text-lg border border-sage-deep shadow-[3px_4px_0_0_rgba(109,143,107,0.4)] hover:-translate-y-0.5 hover:rotate-[-1deg] transition-transform disabled:opacity-60 cursor-pointer"
+        >
+          {watering ? "watering…" : "water it 🫗"}
+        </button>
       ) : !noteOpen ? (
         <button
           onClick={() => setNoteOpen(true)}
@@ -191,7 +194,7 @@ export function Windowsill({
               />
             ))}
           </div>
-          <p className="hand text-2xl text-ink mt-3">
+          <p className="paper-card hand text-2xl text-ink mt-3 bg-[#fffdf8]/80 backdrop-blur-sm border border-ink/10 rounded-2xl px-6 py-3 shadow-[2px_4px_14px_rgba(46,59,46,0.12)]">
             {bloomedOthers > 0 ? (
               <>your flower has joined the garden, blooming alongside {bloomedOthers} other{bloomedOthers === 1 ? "" : "s"} ♡</>
             ) : (

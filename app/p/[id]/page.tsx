@@ -40,7 +40,10 @@ export default async function SeedPage({ params }: { params: Promise<{ id: strin
         note={bloomed ? data.note : null}
         bloomedOthers={bloomedOthers}
       />
-      <Link href="/" className="hand text-xl text-ink-soft hover:text-ink underline decoration-wavy mt-10">
+      <Link
+        href="/"
+        className="paper-card hand text-xl text-ink-soft hover:text-ink underline decoration-wavy mt-10 bg-[#fffdf8]/75 backdrop-blur-sm border border-ink/10 rounded-full px-6 py-2 shadow-[2px_4px_14px_rgba(46,59,46,0.12)]"
+      >
         plant a seed for someone ♡
       </Link>
     </main>
