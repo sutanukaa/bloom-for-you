@@ -28,7 +28,7 @@ export default async function SeedPage({ params }: { params: Promise<{ id: strin
         // the note stays on the server until the plant has actually bloomed
         note={bloomed ? data.note : null}
       />
-      <Link href="/" className="hand text-2xl text-ink-soft hover:text-ink underline decoration-wavy mt-10">
+      <Link href="/" className="hand text-xl text-ink-soft hover:text-ink underline decoration-wavy mt-10">
         plant a seed for someone ♡
       </Link>
     </main>

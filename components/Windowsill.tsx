@@ -65,7 +65,7 @@ export function Windowsill({
 
   return (
     <div className="flex flex-col items-center text-center max-w-md">
-      <p className="hand text-3xl text-ink-soft">
+      <p className="hand text-2xl text-ink-soft">
         {from.trim() ? `${from} planted this` : "someone planted this"}
         {to.trim() ? ` for ${to}` : " for you"} ♡
       </p>
@@ -93,7 +93,7 @@ export function Windowsill({
         <div className="absolute -bottom-3 -left-6 -right-6 h-4 bg-terracotta/80 rounded-full shadow-[0_4px_8px_rgba(74,64,56,0.2)]" />
       </div>
 
-      <p className="hand text-3xl text-ink mt-8">{STAGE_LINES[stage]}</p>
+      <p className="hand text-2xl text-ink mt-8">{STAGE_LINES[stage]}</p>
       {stage !== "bloom" ? (
         <p className="text-ink-soft mt-1">
           blooms in {left || "a moment"} — there&apos;s a note inside, but it opens only when the flower does.
@@ -123,8 +123,8 @@ export function Windowsill({
         </button>
       ) : (
         <div className="unfold mt-6 bg-[#fffdf8] border border-ink/10 rounded-sm px-8 py-6 shadow-[3px_6px_14px_rgba(74,64,56,0.18)] max-w-sm">
-          <p className="hand text-3xl text-ink whitespace-pre-wrap text-left leading-snug">{note}</p>
-          {from.trim() ? <p className="hand text-2xl text-ink-soft text-right mt-4">— {from}</p> : null}
+          <p className="hand text-2xl text-ink whitespace-pre-wrap text-left leading-snug">{note}</p>
+          {from.trim() ? <p className="hand text-xl text-ink-soft text-right mt-4">— {from}</p> : null}
         </div>
       )}
     </div>

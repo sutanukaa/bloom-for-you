@@ -1,16 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  /* warm morning windowsill: cream walls, soil ink, leafy sage, terracotta pot */
-  --cream: #f6efdf;
-  --cream-deep: #ede2c9;
-  --ink: #4a4038;
-  --ink-soft: #7d7268;
-  --sage: #8fae8d;
-  --sage-deep: #6d8f6b;
-  --terracotta: #c97f5f;
-  --blush: #e9a6b0;
-  --sky: #cfe0ea;
+  /* a greenhouse in morning mist: pale green light, deep forest ink,
+     terracotta pots, butter-yellow sun. Token names kept ("cream" = the
+     light ground color) so components don't need touching. */
+  --cream: #eaf0e2;
+  --cream-deep: #dbe5cf;
+  --ink: #2e3b2e;
+  --ink-soft: #64735f;
+  --sage: #9dbb92;
+  --sage-deep: #5f7f58;
+  --terracotta: #c57a55;
+  --blush: #e9b44c; /* butter yellow now — warm accent against all the green */
+  --sky: #d7e6ec;
 }
 
 @theme inline {
@@ -31,17 +33,21 @@ body {
   color: var(--ink);
   font-family: var(--font-body), ui-rounded, system-ui, sans-serif;
   background-color: var(--cream);
-  /* soft morning light + a whisper of grain */
+  /* misty greenhouse light: pale sky at the top settling into leafy ground,
+     with a faint trellis of leaves tiled behind everything */
   background-image:
-    radial-gradient(120% 120% at 50% 0%, #fcf6e9 0%, var(--cream) 55%, var(--cream-deep) 100%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-  background-repeat: no-repeat, repeat;
-  background-size: cover, 140px;
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%235f7f58' stroke-opacity='0.09' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M20 30 q10 -14 22 -8 q-2 14 -22 8'/%3E%3Cpath d='M85 80 q-10 -14 -22 -8 q2 14 22 8'/%3E%3Cpath d='M95 25 q6 10 -2 18'/%3E%3Cpath d='M30 95 q-6 10 2 18'/%3E%3C/g%3E%3C/svg%3E"),
+    linear-gradient(180deg, #e4edf0 0%, var(--cream) 40%, var(--cream-deep) 100%);
+  background-repeat: repeat, no-repeat;
+  background-size: 120px, cover;
   background-attachment: fixed, fixed;
 }
 
 .hand {
-  font-family: var(--font-hand), cursive;
+  /* the "display voice": soft storybook serif, italic */
+  font-family: var(--font-hand), Georgia, serif;
+  font-style: italic;
+  letter-spacing: -0.01em;
 }
 
 ::selection { background: rgba(143, 174, 141, 0.4); color: var(--ink); }

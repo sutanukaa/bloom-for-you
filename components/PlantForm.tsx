@@ -43,7 +43,7 @@ export function PlantForm() {
   if (link) {
     return (
       <div className="rise w-full max-w-md text-center">
-        <p className="hand text-4xl text-ink mb-2">it&apos;s planted 🌱</p>
+        <p className="hand text-3xl text-ink mb-2">it&apos;s planted 🌱</p>
         <p className="text-ink-soft mb-4">
           send this to {to.trim() || "them"} — the seed blooms in 3 real days, and only then does your note open.
         </p>

@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { Caveat, Patrick_Hand } from "next/font/google";
+import { Fraunces, Karla } from "next/font/google";
 import "./globals.css";
 
-const caveat = Caveat({ variable: "--font-hand", subsets: ["latin"] });
-const patrick = Patrick_Hand({ variable: "--font-body", weight: "400", subsets: ["latin"] });
+// A different soul from the scrapbook: soft storybook serif + clean rounded body.
+const fraunces = Fraunces({ variable: "--font-hand", subsets: ["latin"], style: ["normal", "italic"] });
+const karla = Karla({ variable: "--font-body", subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "bloom for you 🌱",
@@ -12,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${caveat.variable} ${patrick.variable} h-full antialiased`}>
+    <html lang="en" className={`${fraunces.variable} ${karla.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );
