@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- a little blooming flower on a stem -->
+  <path d="M16 30 C 15 24, 17 20, 16 15" stroke="#5f7f58" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+  <path d="M16 24 q -5 -3.5 -7 -1 q 2.5 3.5 7 1" fill="#8fae7e"/>
+  <g>
+    <ellipse cx="16" cy="5.5" rx="3.2" ry="5" fill="#e9a6b0"/>
+    <ellipse cx="16" cy="14.5" rx="3.2" ry="5" fill="#e9a6b0"/>
+    <ellipse cx="11.5" cy="10" rx="5" ry="3.2" fill="#e9a6b0"/>
+    <ellipse cx="20.5" cy="10" rx="5" ry="3.2" fill="#e9a6b0"/>
+    <circle cx="16" cy="10" r="3.6" fill="#e9b44c"/>
+  </g>
+</svg>

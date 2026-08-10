@@ -9,8 +9,11 @@ const fraunces = Fraunces({ variable: "--font-hand", subsets: ["latin"], style: 
 const karla = Karla({ variable: "--font-body", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "bloom for you 🌱",
-  description: "plant a seed with a secret note inside — it blooms in 3 real days",
+  title: {
+    default: "bloom for you ✿ plant a seed for someone you love",
+    template: "%s ✿ bloom for you",
+  },
+  description: "plant a seed with a secret note inside — it grows in real time, and the note only opens when it blooms",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
