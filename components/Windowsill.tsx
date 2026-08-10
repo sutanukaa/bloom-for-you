@@ -139,21 +139,24 @@ export function Windowsill({
         </div>
       </div>
 
-      {/* status on a soft paper pill — bare text drowns in the bushes behind it */}
-      <div className="paper-card bg-[#fffdf8]/80 backdrop-blur-sm border border-ink/10 rounded-2xl px-6 py-4 mt-8 shadow-[2px_4px_14px_rgba(46,59,46,0.12)]">
-        <p className="hand text-2xl text-ink">{STAGE_LINES[stage]}</p>
-        {stage !== "bloom" ? (
+      {/* pre-bloom status needs a paper pill (it sits over the bushes); the
+          bloom line stands on its own — one card too many otherwise */}
+      {stage !== "bloom" ? (
+        <div className="paper-card bg-[#fffdf8]/80 backdrop-blur-sm border border-ink/10 rounded-2xl px-6 py-4 mt-8 shadow-[2px_4px_14px_rgba(46,59,46,0.12)]">
+          <p className="hand text-2xl text-ink">{STAGE_LINES[stage]}</p>
           <p className="text-ink-soft mt-1">
             blooms in {left || "a moment"} — there&apos;s a note inside, but it opens only when the flower does.
           </p>
-        ) : null}
-        {stage !== "bloom" ? (
           <p className="text-ink-soft/80 text-sm mt-2">
             {waterings === 0 ? "it hasn't been watered yet" : `watered ${waterings} time${waterings === 1 ? "" : "s"} with love`}
             {" "}· watering won&apos;t make it bloom sooner, but the patch around it grows greener ♡
           </p>
-        ) : null}
-      </div>
+        </div>
+      ) : (
+        <p className="hand text-3xl text-ink mt-8" style={{ textShadow: "0 1px 10px rgba(246,239,223,0.7)" }}>
+          {STAGE_LINES.bloom}
+        </p>
+      )}
 
       {stage !== "bloom" ? (
         <button
@@ -190,11 +193,11 @@ export function Windowsill({
                 src={src}
                 alt=""
                 className="rise windy w-auto pointer-events-none"
-                style={{ height: `${34 + (i % 3) * 10}px`, animationDelay: `${0.15 + i * 0.18}s, ${i * 0.7}s` }}
+                style={{ height: `${52 + (i % 3) * 16}px`, animationDelay: `${0.15 + i * 0.18}s, ${i * 0.7}s` }}
               />
             ))}
           </div>
-          <p className="paper-card hand text-2xl text-ink mt-3 bg-[#fffdf8]/80 backdrop-blur-sm border border-ink/10 rounded-2xl px-6 py-3 shadow-[2px_4px_14px_rgba(46,59,46,0.12)]">
+          <p className="hand text-2xl text-ink mt-3 max-w-sm" style={{ textShadow: "0 1px 10px rgba(246,239,223,0.7)" }}>
             {bloomedOthers > 0 ? (
               <>your flower has joined the garden, blooming alongside {bloomedOthers} other{bloomedOthers === 1 ? "" : "s"} ♡</>
             ) : (
