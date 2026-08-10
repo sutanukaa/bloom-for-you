@@ -5,6 +5,30 @@ import { FLOWERS, MIN_BLOOM_MS, type Flower } from "@/lib/seed";
 import { Plant } from "@/components/Plant";
 import { SongModal, stopPreview, type Song } from "@/components/SongPicker";
 
+// little line icons for the attach row (stroke style matches the garden's linework)
+const ICON = {
+  image: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px]">
+      <rect x="3" y="5" width="18" height="15" rx="3" />
+      <circle cx="9" cy="11" r="1.8" />
+      <path d="M3.5 17.5 L9 13 l3.5 3 L17 11.5 l3.5 4" />
+    </svg>
+  ),
+  video: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px]">
+      <rect x="3" y="6" width="13" height="12" rx="3" />
+      <path d="M16 10.5 L21 8 v8 l-5 -2.5" />
+    </svg>
+  ),
+  song: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px]">
+      <path d="M9 18.5 V6.5 L20 4.5 v11.5" />
+      <circle cx="6.8" cy="18.5" r="2.3" />
+      <circle cx="17.8" cy="16" r="2.3" />
+    </svg>
+  ),
+};
+
 const FLOWER_LABELS: Record<Flower, string> = {
   sunflower: "sunflower ☀",
   tulip: "tulip ♡",
@@ -160,9 +184,9 @@ export function PlantForm() {
               <label
                 key={kind}
                 title={kind === "image" ? "tuck in a photo" : "tuck in a little video"}
-                className="w-8 h-8 rounded-full hover:bg-cream/80 flex items-center justify-center text-lg cursor-pointer transition-colors"
+                className="w-8 h-8 rounded-full text-ink-soft hover:text-ink hover:bg-cream/80 flex items-center justify-center cursor-pointer transition-colors"
               >
-                {kind === "image" ? "📷" : "🎬"}
+                {ICON[kind]}
                 <input
                   type="file"
                   accept={`${kind}/*`}
@@ -183,9 +207,9 @@ export function PlantForm() {
             <button
               onClick={() => setSongModal(true)}
               title="tuck in a song"
-              className="w-8 h-8 rounded-full hover:bg-cream/80 flex items-center justify-center text-lg cursor-pointer transition-colors"
+              className="w-8 h-8 rounded-full text-ink-soft hover:text-ink hover:bg-cream/80 flex items-center justify-center cursor-pointer transition-colors"
             >
-              🎵
+              {ICON.song}
             </button>
             <span className="text-ink-soft/60 text-xs ml-1">sealed until it blooms</span>
           </div>
