@@ -78,9 +78,16 @@ export function GardenBackground() {
   const [kicked, setKicked] = useState<number | null>(null);
 
   useEffect(() => {
-    // ?time=night|dusk|morning|day previews any hour without waiting for it
-    const forced = new URLSearchParams(window.location.search).get("time") as Period | null;
-    const tick = () => setPeriod(forced && forced in SKIES ? forced : periodOf(new Date().getHours()));
+    // ?time=night|dusk|morning|day previews any hour without waiting for it;
+    // ?time=cycle walks day→dusk→night→morning on a loop to demo the transitions
+    const forced = new URLSearchParams(window.location.search).get("time");
+    if (forced === "cycle") {
+      const order: Period[] = ["day", "dusk", "night", "morning"];
+      let i = 0;
+      const t = setInterval(() => setPeriod(order[++i % order.length]), 25_000);
+      return () => clearInterval(t);
+    }
+    const tick = () => setPeriod(forced && forced in SKIES ? (forced as Period) : periodOf(new Date().getHours()));
     tick();
     const t = setInterval(tick, 60_000);
     return () => clearInterval(t);

@@ -22,11 +22,11 @@ function makeNoiseBuffer(a: AudioContext, seconds: number): AudioBuffer {
   return buf;
 }
 
-// night here = the garden's night (matches GardenBackground's periodOf,
-// including the ?time= preview override)
+// night here = whatever the garden is showing: GardenBackground stamps the
+// current period (including ?time= previews and cycle mode) on <html>
 function isNight(): boolean {
-  const forced = new URLSearchParams(window.location.search).get("time");
-  if (forced) return forced === "night";
+  const shown = document.documentElement.dataset.garden;
+  if (shown) return shown === "night";
   const h = new Date().getHours();
   return h >= 20 || h < 5;
 }
