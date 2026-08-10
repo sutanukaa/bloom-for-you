@@ -2,35 +2,12 @@
 
 import { useEffect, useState } from "react";
 
-// Full-viewport garden scenery pinned to the bottom of the screen: rolling
-// hedges, bushes, grass and flowers swaying in the wind, with gusts rippling
-// through left-to-right, butterflies, drifting dandelion seeds, and a sky
-// that follows the visitor's time of day (fireflies after dark).
+/* eslint-disable @next/next/no-img-element */
 
-const FLOWERS: { x: number; h: number; c: string; center: string; d: number; dur: number; s: number }[] = [
-  { x: 60, h: 90, c: "#e9b44c", center: "#8a6238", d: 0, dur: 4.2, s: 1 },
-  { x: 150, h: 60, c: "#e9a6b0", center: "#c76e7c", d: 0.8, dur: 5.1, s: 0.8 },
-  { x: 235, h: 110, c: "#fdfaf2", center: "#e9b44c", d: 1.6, dur: 4.6, s: 1.1 },
-  { x: 330, h: 70, c: "#d16a6a", center: "#a94f4f", d: 0.4, dur: 5.5, s: 0.85 },
-  { x: 430, h: 95, c: "#e9b44c", center: "#8a6238", d: 2.1, dur: 4.0, s: 0.95 },
-  { x: 520, h: 55, c: "#c9a0dc", center: "#9a6fb0", d: 1.2, dur: 5.8, s: 0.75 },
-  { x: 1080, h: 65, c: "#e9a6b0", center: "#c76e7c", d: 0.6, dur: 4.8, s: 0.8 },
-  { x: 1170, h: 100, c: "#fdfaf2", center: "#e9b44c", d: 1.9, dur: 4.3, s: 1 },
-  { x: 1265, h: 70, c: "#e9b44c", center: "#8a6238", d: 0.2, dur: 5.3, s: 0.9 },
-  { x: 1360, h: 105, c: "#d16a6a", center: "#a94f4f", d: 1.4, dur: 4.5, s: 1.05 },
-  { x: 1455, h: 60, c: "#c9a0dc", center: "#9a6fb0", d: 2.4, dur: 5.0, s: 0.8 },
-  { x: 1540, h: 85, c: "#e9a6b0", center: "#c76e7c", d: 0.9, dur: 4.4, s: 0.95 },
-];
-
-const GRASS: { x: number; s: number; d: number; dur: number }[] = [
-  { x: 100, s: 1, d: 0.3, dur: 3.6 }, { x: 200, s: 0.8, d: 1.1, dur: 4.2 },
-  { x: 290, s: 1.1, d: 0.7, dur: 3.9 }, { x: 385, s: 0.9, d: 1.8, dur: 4.5 },
-  { x: 480, s: 1, d: 0.1, dur: 3.7 }, { x: 575, s: 0.85, d: 1.4, dur: 4.1 },
-  { x: 700, s: 0.9, d: 0.9, dur: 4.4 }, { x: 830, s: 1, d: 1.7, dur: 3.8 },
-  { x: 960, s: 0.85, d: 0.5, dur: 4.3 }, { x: 1120, s: 1.05, d: 1.2, dur: 3.9 },
-  { x: 1220, s: 0.9, d: 0.2, dur: 4.6 }, { x: 1315, s: 1, d: 1.5, dur: 3.7 },
-  { x: 1410, s: 0.8, d: 0.8, dur: 4.2 }, { x: 1505, s: 1.1, d: 2.0, dur: 3.95 },
-];
+// The painted garden: hedge, bushes, grass and wildflowers (all generated in
+// the same gouache style as the plant art), swaying in the wind with gusts
+// rippling through, butterflies, drifting dandelion seeds, and a sky that
+// follows the visitor's clock — moon, stars and fireflies after dark.
 
 type Period = "morning" | "day" | "dusk" | "night";
 
@@ -41,6 +18,14 @@ const SKIES: Record<Period, [string, string, string]> = {
   night: ["#2b3a4e", "#3a4a57", "#42524e"],
 };
 
+// dims the painted art itself so the scenery genuinely darkens at night
+const SCENERY_FILTER: Record<Period, string> = {
+  morning: "brightness(1.03) saturate(1.02)",
+  day: "none",
+  dusk: "brightness(0.94) saturate(0.95) hue-rotate(-6deg)",
+  night: "brightness(0.55) saturate(0.65)",
+};
+
 function periodOf(hour: number): Period {
   if (hour >= 5 && hour < 10) return "morning";
   if (hour >= 10 && hour < 16) return "day";
@@ -48,97 +33,44 @@ function periodOf(hour: number): Period {
   return "night";
 }
 
-function Flower({ f, i, kicked, onKick }: { f: (typeof FLOWERS)[number]; i: number; kicked: boolean; onKick: (i: number) => void }) {
-  const { x, h, c, center, d, dur, s } = f;
-  const origin = { transformOrigin: `${x}px 900px` } as const;
-  return (
-    // three nested groups so the transforms compose: gust wave → click-kick → own sway
-    <g className="gust" style={{ ...origin, animationDelay: `${(x / 1600) * 1.6}s` }}>
-      <g className={kicked ? "kicked" : ""} style={origin}>
-        <g
-          className="windy flower-hit"
-          style={{ ...origin, animationDelay: `${d}s`, animationDuration: `${dur}s`, pointerEvents: "auto" }}
-          onPointerDown={() => onKick(i)}
-        >
-          <path d={`M${x} 900 Q ${x - 4 * s} ${900 - h / 2} ${x} ${900 - h}`} stroke="#5f7f58" strokeWidth={4 * s} fill="none" strokeLinecap="round" />
-          <path d={`M${x} ${900 - h * 0.45} q ${-14 * s} ${-8 * s} ${-18 * s} ${2 * s} q ${8 * s} ${9 * s} ${18 * s} ${-2 * s}`} fill="#7ba173" />
-          <path d={`M${x} ${900 - h * 0.65} q ${14 * s} ${-8 * s} ${18 * s} ${2 * s} q ${-8 * s} ${9 * s} ${-18 * s} ${-2 * s}`} fill="#7ba173" />
-          {[0, 60, 120, 180, 240, 300].map((a) => (
-            <ellipse key={a} cx={x} cy={900 - h - 11 * s} rx={6 * s} ry={12 * s} fill={c} transform={`rotate(${a} ${x} ${900 - h})`} />
-          ))}
-          <circle cx={x} cy={900 - h} r={6.5 * s} fill={center} />
-        </g>
-      </g>
-    </g>
-  );
-}
+// wildflowers along the bottom: img 1-5, position, height (vh), sway timing
+const FLOWERS = [
+  { img: 1, left: 2, h: 15, d: 0, dur: 4.2 },
+  { img: 2, left: 7.5, h: 10, d: 0.8, dur: 5.1 },
+  { img: 3, left: 14, h: 17, d: 1.6, dur: 4.6 },
+  { img: 4, left: 20, h: 11, d: 0.4, dur: 5.5 },
+  { img: 5, left: 26, h: 14, d: 2.1, dur: 4.0 },
+  { img: 1, left: 32, h: 9, d: 1.2, dur: 5.8 },
+  { img: 2, left: 66, h: 10, d: 0.6, dur: 4.8 },
+  { img: 3, left: 72, h: 16, d: 1.9, dur: 4.3 },
+  { img: 4, left: 78.5, h: 11, d: 0.2, dur: 5.3 },
+  { img: 5, left: 84, h: 17, d: 1.4, dur: 4.5 },
+  { img: 1, left: 90, h: 10, d: 2.4, dur: 5.0 },
+  { img: 2, left: 95.5, h: 13, d: 0.9, dur: 4.4 },
+];
 
-function Grass({ x, s, d, dur }: (typeof GRASS)[number]) {
-  const origin = { transformOrigin: `${x}px 900px` } as const;
-  return (
-    <g className="gust" style={{ ...origin, animationDelay: `${(x / 1600) * 1.6}s` }}>
-      <g className="windy" style={{ ...origin, animationDelay: `${d}s`, animationDuration: `${dur}s` }}>
-        <path d={`M${x} 900 q ${-6 * s} -${28 * s} -${12 * s} -${36 * s}`} stroke="#6d8f65" strokeWidth={3.5 * s} fill="none" strokeLinecap="round" />
-        <path d={`M${x} 900 q 0 -${34 * s} ${-2 * s} -${44 * s}`} stroke="#7ba173" strokeWidth={3.5 * s} fill="none" strokeLinecap="round" />
-        <path d={`M${x} 900 q ${7 * s} -${26 * s} ${13 * s} -${33 * s}`} stroke="#6d8f65" strokeWidth={3.5 * s} fill="none" strokeLinecap="round" />
-      </g>
-    </g>
-  );
-}
-
-// outer <g transform> attribute sets the height; the animated groups inside
-// only ever translate relative to it (a CSS animation would otherwise
-// override an inline transform style and pin these to y=0)
-function Butterfly({ delay, dur, color, y }: { delay: number; dur: number; color: string; y: number }) {
-  return (
-    <g transform={`translate(0 ${y})`}>
-      <g className="butterfly" style={{ animationDuration: `${dur}s`, animationDelay: `${delay}s` }}>
-        {/* each wing pair flaps toward the body (scaleX around its body-side edge) */}
-        <g className="flap-l">
-          {/* forewing + hindwing, left */}
-          <path d="M-1 -3 C -8 -20, -24 -24, -28 -12 C -30 -3, -16 1, -1 0 Z" fill={color} stroke="#4a4038" strokeOpacity="0.35" strokeWidth="1.2" />
-          <path d="M-1 1 C -12 2, -20 8, -17 16 C -14 22, -4 16, -1 5 Z" fill={color} stroke="#4a4038" strokeOpacity="0.35" strokeWidth="1.2" />
-          <circle cx="-17" cy="-11" r="2.6" fill="#fdfaf2" opacity="0.85" />
-          <circle cx="-11" cy="10" r="1.8" fill="#fdfaf2" opacity="0.85" />
-        </g>
-        <g className="flap-r">
-          <path d="M1 -3 C 8 -20, 24 -24, 28 -12 C 30 -3, 16 1, 1 0 Z" fill={color} stroke="#4a4038" strokeOpacity="0.35" strokeWidth="1.2" />
-          <path d="M1 1 C 12 2, 20 8, 17 16 C 14 22, 4 16, 1 5 Z" fill={color} stroke="#4a4038" strokeOpacity="0.35" strokeWidth="1.2" />
-          <circle cx="17" cy="-11" r="2.6" fill="#fdfaf2" opacity="0.85" />
-          <circle cx="11" cy="10" r="1.8" fill="#fdfaf2" opacity="0.85" />
-        </g>
-        {/* body + antennae */}
-        <ellipse cx="0" cy="2" rx="2" ry="10" fill="#4a4038" />
-        <circle cx="0" cy="-9" r="2.6" fill="#4a4038" />
-        <path d="M-1 -11 C -4 -16, -7 -18, -9 -17" stroke="#4a4038" strokeWidth="1.2" fill="none" strokeLinecap="round" />
-        <path d="M1 -11 C 4 -16, 7 -18, 9 -17" stroke="#4a4038" strokeWidth="1.2" fill="none" strokeLinecap="round" />
-      </g>
-    </g>
-  );
-}
-
-function DandelionSeed({ delay, dur, y }: { delay: number; dur: number; y: number }) {
-  return (
-    <g transform={`translate(0 ${y})`}>
-      <g className="drift-seed" style={{ animationDuration: `${dur}s`, animationDelay: `${delay}s` }}>
-        <g className="bob" style={{ animationDelay: `${delay * 0.7}s` }}>
-          <circle cx="0" cy="0" r="2.5" fill="#fdfaf2" />
-          {[0, 45, 90, 135, 180, 225, 270, 315].map((a) => (
-            <line key={a} x1="0" y1="0" x2={13 * Math.cos((a * Math.PI) / 180)} y2={13 * Math.sin((a * Math.PI) / 180)} stroke="#fdfaf2" strokeWidth="1.4" opacity="0.85" />
-          ))}
-        </g>
-      </g>
-    </g>
-  );
-}
+const GRASS = [
+  { left: 4.5, h: 6, d: 0.3, dur: 3.6 }, { left: 11, h: 4.5, d: 1.1, dur: 4.2 },
+  { left: 17, h: 6.5, d: 0.7, dur: 3.9 }, { left: 23, h: 5, d: 1.8, dur: 4.5 },
+  { left: 29.5, h: 6, d: 0.1, dur: 3.7 }, { left: 36, h: 4.5, d: 1.4, dur: 4.1 },
+  { left: 43, h: 5.5, d: 0.9, dur: 4.4 }, { left: 51, h: 6, d: 1.7, dur: 3.8 },
+  { left: 58, h: 4.5, d: 0.5, dur: 4.3 }, { left: 69, h: 6, d: 1.2, dur: 3.9 },
+  { left: 75.5, h: 5, d: 0.2, dur: 4.6 }, { left: 81.5, h: 6.5, d: 1.5, dur: 3.7 },
+  { left: 88, h: 4.5, d: 0.8, dur: 4.2 }, { left: 93.5, h: 6, d: 2.0, dur: 3.95 },
+];
 
 const FIREFLIES = [
-  { x: 250, y: 700, d: 0 }, { x: 520, y: 640, d: 1.3 }, { x: 760, y: 720, d: 2.6 },
-  { x: 980, y: 660, d: 0.7 }, { x: 1230, y: 710, d: 1.9 }, { x: 1440, y: 650, d: 3.1 },
+  { left: 16, bottom: 22, d: 0 }, { left: 33, bottom: 30, d: 1.3 }, { left: 48, bottom: 20, d: 2.6 },
+  { left: 61, bottom: 28, d: 0.7 }, { left: 77, bottom: 21, d: 1.9 }, { left: 90, bottom: 27, d: 3.1 },
+];
+
+const STARS = [
+  { left: 12, top: 10 }, { left: 26, top: 18 }, { left: 41, top: 8 },
+  { left: 56, top: 15 }, { left: 70, top: 7 }, { left: 94, top: 24 },
 ];
 
 export function GardenBackground() {
-  // default to "day" on the server; real hour arrives after mount (no hydration mismatch)
+  // default to "day" on the server; the real hour arrives after mount
   const [period, setPeriod] = useState<Period>("day");
   const [kicked, setKicked] = useState<number | null>(null);
 
@@ -158,109 +90,112 @@ export function GardenBackground() {
   const night = period === "night";
 
   return (
-    <div className="fixed inset-0 -z-10 pointer-events-none select-none" aria-hidden>
-      <svg className="w-full h-full" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice">
-        <defs>
-          <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor={top} />
-            <stop offset="55%" stopColor={mid} />
-            <stop offset="100%" stopColor={bot} />
-          </linearGradient>
-        </defs>
-        <rect width="1600" height="900" fill="url(#sky)" style={{ transition: "all 2s" }} />
+    <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none select-none" aria-hidden>
+      {/* sky */}
+      <div
+        className="absolute inset-0"
+        style={{ background: `linear-gradient(180deg, ${top} 0%, ${mid} 55%, ${bot} 100%)`, transition: "background 2s" }}
+      />
 
-        {/* sun by day, moon by night */}
-        {night ? (
-          <g>
-            <circle cx="1380" cy="130" r="48" fill="#e8e6d8" opacity="0.9" />
-            <circle cx="1362" cy="118" r="9" fill="#d5d3c4" opacity="0.7" />
-            <circle cx="1394" cy="146" r="6" fill="#d5d3c4" opacity="0.7" />
-            {[[200, 90], [420, 160], [660, 70], [900, 130], [1120, 60], [1500, 220]].map(([x, y], i) => (
-              <circle key={i} cx={x} cy={y} r="2" fill="#fdfaf2" className="twinkle" style={{ animationDelay: `${i * 0.6}s` }} />
-            ))}
-          </g>
-        ) : (
-          <g>
-            <circle cx="1380" cy="130" r="90" fill={period === "dusk" ? "#f0b58e" : "#f6dfa0"} opacity="0.55" />
-            <circle cx="1380" cy="130" r="55" fill={period === "dusk" ? "#eda173" : "#f3d98b"} opacity="0.8" />
-          </g>
-        )}
+      {/* everything painted lives under one dimmer so night actually darkens it */}
+      <div className="absolute inset-0" style={{ filter: SCENERY_FILTER[period], transition: "filter 2s" }}>
+        {/* sun / moon */}
+        <img
+          src={night ? "/moon.png" : "/sun.png"}
+          alt=""
+          className="absolute w-[13vw] min-w-28 max-w-52"
+          style={{ right: "4%", top: "4%", opacity: 0.95 }}
+        />
+        {night &&
+          STARS.map((s, i) => (
+            <div
+              key={i}
+              className="twinkle absolute w-1 h-1 rounded-full bg-[#fdfaf2]"
+              style={{ left: `${s.left}%`, top: `${s.top}%`, animationDelay: `${i * 0.6}s` }}
+            />
+          ))}
 
-        {/* drifting clouds */}
-        <g className="cloud" style={{ animationDuration: "80s" }}>
-          <ellipse cx="300" cy="120" rx="90" ry="26" fill="#ffffff" opacity={night ? 0.12 : 0.65} />
-          <ellipse cx="360" cy="100" rx="60" ry="22" fill="#ffffff" opacity={night ? 0.12 : 0.65} />
-        </g>
-        <g className="cloud" style={{ animationDuration: "110s", animationDelay: "-40s" }}>
-          <ellipse cx="800" cy="70" rx="70" ry="20" fill="#ffffff" opacity={night ? 0.1 : 0.5} />
-          <ellipse cx="850" cy="55" rx="45" ry="16" fill="#ffffff" opacity={night ? 0.1 : 0.5} />
-        </g>
+        {/* clouds */}
+        <img src="/cloud1.png" alt="" className="cloud absolute w-[16vw] min-w-36" style={{ top: "9%", animationDuration: "80s", opacity: night ? 0.25 : 0.9 }} />
+        <img src="/cloud2.png" alt="" className="cloud absolute w-[11vw] min-w-28" style={{ top: "3%", animationDuration: "110s", animationDelay: "-40s", opacity: night ? 0.2 : 0.75 }} />
 
-        {/* butterflies by day, fireflies by night */}
+        {/* butterflies by day (they sleep at night) */}
         {!night && (
           <>
-            <Butterfly delay={0} dur={38} color="#e9a6b0" y={520} />
-            <Butterfly delay={-16} dur={52} color="#e9b44c" y={430} />
+            <div className="butterfly absolute" style={{ top: "38%", animationDuration: "38s" }}>
+              <img src="/butterfly1.png" alt="" className="flap-img w-10 sm:w-12" />
+            </div>
+            <div className="butterfly absolute" style={{ top: "26%", animationDuration: "52s", animationDelay: "-16s" }}>
+              <img src="/butterfly2.png" alt="" className="flap-img w-8 sm:w-10" style={{ animationDelay: "0.2s" }} />
+            </div>
           </>
         )}
 
         {/* dandelion seeds riding the wind */}
-        <DandelionSeed delay={0} dur={30} y={380} />
-        <DandelionSeed delay={-12} dur={42} y={480} />
-        <DandelionSeed delay={-25} dur={36} y={300} />
+        {[{ top: 30, dur: 30, delay: 0 }, { top: 45, dur: 42, delay: -12 }, { top: 22, dur: 36, delay: -25 }].map((sd, i) => (
+          <div key={i} className="drift-seed absolute" style={{ top: `${sd.top}%`, animationDuration: `${sd.dur}s`, animationDelay: `${sd.delay}s` }}>
+            <div className="bob" style={{ animationDelay: `${i * 1.1}s` }}>
+              <img src="/dandelion.png" alt="" className="w-6 sm:w-8 opacity-90" />
+            </div>
+          </div>
+        ))}
 
-        {/* distant hedge line */}
-        <path
-          d="M0 780 Q 100 730 220 765 Q 340 720 470 760 Q 600 715 740 758 Q 880 720 1010 762 Q 1140 722 1270 760 Q 1400 725 1600 768 L 1600 900 L 0 900 Z"
-          fill="#a9c49b"
+        {/* distant hedge line — tiled strip */}
+        <div
+          className="absolute bottom-0 left-0 right-0 h-[24vh]"
+          style={{ backgroundImage: "url(/hedge.png)", backgroundRepeat: "repeat-x", backgroundSize: "auto 100%", backgroundPosition: "bottom" }}
         />
 
-        {/* bushes */}
-        <g className="windy-slow" style={{ transformOrigin: "120px 900px" }}>
-          <circle cx="60" cy="850" r="80" fill="#7ba173" />
-          <circle cx="160" cy="865" r="65" fill="#87ab7c" />
-          <circle cx="240" cy="885" r="55" fill="#7ba173" />
-        </g>
-        <g className="windy-slow" style={{ transformOrigin: "1480px 900px", animationDelay: "1.5s" }}>
-          <circle cx="1540" cy="850" r="85" fill="#7ba173" />
-          <circle cx="1440" cy="868" r="62" fill="#87ab7c" />
-          <circle cx="1360" cy="888" r="52" fill="#7ba173" />
-        </g>
-        <g className="windy-slow" style={{ transformOrigin: "700px 900px", animationDelay: "0.7s" }}>
-          <circle cx="650" cy="885" r="45" fill="#87ab7c" />
-          <circle cx="720" cy="892" r="38" fill="#7ba173" />
-        </g>
-        <g className="windy-slow" style={{ transformOrigin: "1000px 900px", animationDelay: "2.2s" }}>
-          <circle cx="980" cy="888" r="42" fill="#7ba173" />
-          <circle cx="1050" cy="894" r="34" fill="#87ab7c" />
-        </g>
+        {/* bushes breathing in the wind */}
+        <img src="/bush1.png" alt="" className="windy-slow absolute bottom-[-4vh] left-[-3vw] w-[22vw] min-w-44" />
+        <img src="/bush1.png" alt="" className="windy-slow absolute bottom-[-5vh] right-[-4vw] w-[26vw] min-w-52" style={{ animationDelay: "1.5s", transform: "scaleX(-1)" }} />
+        <img src="/bush1.png" alt="" className="windy-slow absolute bottom-[-3vh] left-[38vw] w-[13vw] min-w-28" style={{ animationDelay: "0.7s" }} />
+        <img src="/bush1.png" alt="" className="windy-slow absolute bottom-[-3vh] left-[58vw] w-[11vw] min-w-24" style={{ animationDelay: "2.2s", transform: "scaleX(-1)" }} />
 
-        {/* ground */}
-        <path d="M0 880 Q 400 862 800 876 Q 1200 890 1600 872 L 1600 900 L 0 900 Z" fill="#8fae7e" />
+        {/* grass tufts */}
+        {GRASS.map((g, i) => (
+          <div key={i} className="gust absolute bottom-0" style={{ left: `${g.left}%`, animationDelay: `${(g.left / 100) * 1.6}s` }}>
+            <img src="/grass.png" alt="" className="windy" style={{ height: `${g.h}vh`, width: "auto", animationDelay: `${g.d}s`, animationDuration: `${g.dur}s` }} />
+          </div>
+        ))}
 
-        {GRASS.map((g, i) => <Grass key={i} {...g} />)}
-        {FLOWERS.map((f, i) => <Flower key={i} f={f} i={i} kicked={kicked === i} onKick={kick} />)}
+        {/* wildflowers — poke one and it springs about */}
+        {FLOWERS.map((f, i) => (
+          <div key={i} className="gust absolute bottom-0" style={{ left: `${f.left}%`, animationDelay: `${(f.left / 100) * 1.6}s` }}>
+            <div className={kicked === i ? "kicked" : ""}>
+              <img
+                src={`/flower${f.img}.png`}
+                alt=""
+                className="windy flower-hit"
+                style={{ height: `${f.h}vh`, width: "auto", animationDelay: `${f.d}s`, animationDuration: `${f.dur}s`, pointerEvents: "auto" }}
+                onPointerDown={() => kick(i)}
+                draggable={false}
+              />
+            </div>
+          </div>
+        ))}
 
         {/* fireflies wandering low over the garden */}
         {night &&
           FIREFLIES.map((f, i) => (
-            <g key={i} className="firefly" style={{ transformOrigin: `${f.x}px ${f.y}px`, animationDelay: `${f.d}s` }}>
-              <circle cx={f.x} cy={f.y} r="8" fill="#f3e98b" opacity="0.25" />
-              <circle cx={f.x} cy={f.y} r="3" fill="#f3e98b" />
-            </g>
+            <div key={i} className="firefly absolute" style={{ left: `${f.left}%`, bottom: `${f.bottom}%`, animationDelay: `${f.d}s` }}>
+              <div className="w-4 h-4 rounded-full bg-[#f3e98b] opacity-25 absolute -inset-1" />
+              <div className="w-1.5 h-1.5 rounded-full bg-[#f3e98b]" />
+            </div>
           ))}
+      </div>
 
-        {/* evening settles over everything */}
-        {period !== "day" && (
-          <rect
-            width="1600"
-            height="900"
-            fill={night ? "#1c2b3a" : period === "dusk" ? "#e9a6b0" : "#f3d98b"}
-            opacity={night ? 0.18 : 0.08}
-            style={{ transition: "all 2s" }}
-          />
-        )}
-      </svg>
+      {/* the hour's tint settles over everything */}
+      {period !== "day" && (
+        <div
+          className="absolute inset-0"
+          style={{
+            background: night ? "#1c2b3a" : period === "dusk" ? "#e9a6b0" : "#f3d98b",
+            opacity: night ? 0.18 : 0.08,
+            transition: "all 2s",
+          }}
+        />
+      )}
     </div>
   );
 }

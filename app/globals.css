@@ -36,18 +36,18 @@ body {
   background-color: #dcebee;
 }
 
-/* the wind: everything planted leans and comes back, each at its own pace */
+/* the wind: everything planted leans from its roots, each at its own pace */
 @keyframes wind {
   0%, 100% { transform: rotate(-2.2deg); }
   50% { transform: rotate(2.2deg); }
 }
-.windy { animation: wind 4.5s ease-in-out infinite; transform-box: view-box; }
-.windy-slow { animation: wind 7s ease-in-out infinite; transform-box: view-box; }
+.windy { animation: wind 4.5s ease-in-out infinite; transform-origin: 50% 100%; }
+.windy-slow { animation: wind 7s ease-in-out infinite; transform-origin: 50% 100%; }
 
 /* clouds amble across the whole sky */
 @keyframes amble {
-  from { transform: translateX(-250px); }
-  to { transform: translateX(1700px); }
+  from { transform: translateX(-20vw); }
+  to { transform: translateX(110vw); }
 }
 .cloud { animation: amble 90s linear infinite; }
 
@@ -58,7 +58,7 @@ body {
   84% { transform: rotate(5deg); }
   91% { transform: rotate(-1deg); }
 }
-.gust { animation: gust-wave 12s ease-in-out infinite; transform-box: view-box; }
+.gust { animation: gust-wave 12s ease-in-out infinite; transform-origin: 50% 100%; }
 
 /* poked flower springs about, then settles */
 @keyframes kick {
@@ -68,29 +68,27 @@ body {
   80% { transform: rotate(-3deg); }
   100% { transform: rotate(0deg); }
 }
-.kicked { animation: kick 0.75s ease-in-out; transform-box: view-box; }
+.kicked { animation: kick 0.75s ease-in-out; transform-origin: 50% 100%; }
 .flower-hit { cursor: pointer; }
 
-/* butterflies wander the sky: long meander + wing flap */
+/* butterflies wander the sky */
 @keyframes meander {
-  0% { transform: translateX(-60px) translateY(0); }
-  20% { transform: translateX(320px) translateY(-70px); }
-  40% { transform: translateX(650px) translateY(30px); }
-  60% { transform: translateX(980px) translateY(-90px); }
-  80% { transform: translateX(1320px) translateY(-10px); }
-  100% { transform: translateX(1700px) translateY(-60px); }
+  0% { transform: translateX(-6vw) translateY(0); }
+  20% { transform: translateX(20vw) translateY(-9vh); }
+  40% { transform: translateX(41vw) translateY(4vh); }
+  60% { transform: translateX(61vw) translateY(-11vh); }
+  80% { transform: translateX(83vw) translateY(-1vh); }
+  100% { transform: translateX(106vw) translateY(-7vh); }
 }
 .butterfly { animation: meander linear infinite; }
-/* wings fold toward the body: each pair scales around its body-side edge
-   (fill-box, or the origin would be the middle of the whole 1600x900 view) */
-@keyframes flap { 0%, 100% { transform: scaleX(1); } 50% { transform: scaleX(0.25); } }
-.flap-l { animation: flap 0.4s ease-in-out infinite; transform-box: fill-box; transform-origin: right center; }
-.flap-r { animation: flap 0.4s ease-in-out infinite; transform-box: fill-box; transform-origin: left center; }
+/* the painted butterfly beats its wings by squashing toward its body */
+@keyframes flap-img { 0%, 100% { transform: scaleX(1); } 50% { transform: scaleX(0.55); } }
+.flap-img { animation: flap-img 0.45s ease-in-out infinite; }
 
 /* dandelion seeds ride the wind, bobbing as they go */
 @keyframes drift-x {
-  from { transform: translateX(-40px); }
-  to { transform: translateX(1680px); }
+  from { transform: translateX(-5vw); }
+  to { transform: translateX(105vw); }
 }
 .drift-seed { animation: drift-x linear infinite; }
 @keyframes bob {
@@ -105,7 +103,7 @@ body {
   40% { opacity: 1; transform: translate(14px, -10px); }
   70% { opacity: 0.4; transform: translate(-8px, 6px); }
 }
-.firefly { animation: firefly-glow 5s ease-in-out infinite; transform-box: view-box; }
+.firefly { animation: firefly-glow 5s ease-in-out infinite; }
 
 /* stars twinkle */
 @keyframes twinkle { 0%, 100% { opacity: 0.25; } 50% { opacity: 1; } }
