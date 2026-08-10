@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { FLOWERS, type Stage } from "@/lib/seed";
-import { plantSrc } from "@/components/Plant";
+import { plantSrc, plantWidth } from "@/components/Plant";
 
 // Flipbook: the painted stages crossfade into each other, bottom-anchored so
 // the pot never moves — reads as one plant growing. Bloom holds a while,
@@ -28,9 +28,11 @@ export function HeroPlant() {
 
   return (
     <div className="pointer-events-none select-none sway" aria-hidden>
-      {/* every frame stays mounted (so they're preloaded), stacked bottom-center;
+      {/* every frame stays mounted (so they're preloaded), stacked bottom-center
+          and sized so the POT is identical in all of them (no max-h clamping —
+          that shrank the tall bloom frames and made the soil frames look huge);
           only the current one is visible, easing in with a little upward swell */}
-      <div className="relative w-44 sm:w-52 h-72 sm:h-80">
+      <div className="relative w-44 h-80 sm:h-96">
         {STAGES.map(({ stage }, s) => (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -38,8 +40,9 @@ export function HeroPlant() {
             src={plantSrc(stage, flower)}
             alt=""
             draggable={false}
-            className="absolute bottom-0 left-1/2 w-full max-h-full object-contain object-bottom transition-all duration-700 ease-out"
+            className="absolute bottom-0 left-1/2 h-auto transition-all duration-700 ease-out"
             style={{
+              width: plantWidth(stage, flower, 118),
               transform: `translateX(-50%) scale(${s === step ? 1 : 0.96})`,
               transformOrigin: "50% 100%",
               opacity: s === step ? 1 : 0,

@@ -88,8 +88,9 @@ export function Windowsill({
             ))}
           </div>
         )}
-        <div className={wiggle ? "wiggle" : ""}>
-          <Plant stage={stage} flower={flower} />
+        {/* fixed-height, bottom-anchored so the window doesn't resize between stages */}
+        <div className={`flex items-end justify-center h-80 sm:h-[26rem] ${wiggle ? "wiggle" : ""}`}>
+          <Plant stage={stage} flower={flower} potPx={130} />
         </div>
         {/* the sill */}
         <div className="absolute -bottom-3 -left-6 -right-6 h-4 bg-terracotta/80 rounded-full shadow-[0_4px_8px_rgba(74,64,56,0.2)]" />
