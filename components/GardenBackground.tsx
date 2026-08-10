@@ -86,13 +86,18 @@ function Grass({ x, s, d, dur }: (typeof GRASS)[number]) {
   );
 }
 
+// outer <g transform> attribute sets the height; the animated groups inside
+// only ever translate relative to it (a CSS animation would otherwise
+// override an inline transform style and pin these to y=0)
 function Butterfly({ delay, dur, color, y }: { delay: number; dur: number; color: string; y: number }) {
   return (
-    <g className="butterfly" style={{ animationDuration: `${dur}s`, animationDelay: `${delay}s`, transform: `translateY(${y}px)` }}>
-      <g className="flap">
-        <ellipse cx="-7" cy="0" rx="9" ry="6" fill={color} opacity="0.9" transform="rotate(-20)" />
-        <ellipse cx="7" cy="0" rx="9" ry="6" fill={color} opacity="0.9" transform="rotate(20)" />
-        <ellipse cx="0" cy="2" rx="2.2" ry="7" fill="#4a4038" />
+    <g transform={`translate(0 ${y})`}>
+      <g className="butterfly" style={{ animationDuration: `${dur}s`, animationDelay: `${delay}s` }}>
+        <g className="flap">
+          <ellipse cx="-9" cy="0" rx="12" ry="8" fill={color} transform="rotate(-20)" />
+          <ellipse cx="9" cy="0" rx="12" ry="8" fill={color} transform="rotate(20)" />
+          <ellipse cx="0" cy="2" rx="2.6" ry="9" fill="#4a4038" />
+        </g>
       </g>
     </g>
   );
@@ -100,12 +105,14 @@ function Butterfly({ delay, dur, color, y }: { delay: number; dur: number; color
 
 function DandelionSeed({ delay, dur, y }: { delay: number; dur: number; y: number }) {
   return (
-    <g className="drift-seed" style={{ animationDuration: `${dur}s`, animationDelay: `${delay}s`, transform: `translateY(${y}px)` }}>
-      <g className="bob" style={{ animationDelay: `${delay * 0.7}s` }}>
-        <circle cx="0" cy="0" r="2" fill="#fdfaf2" />
-        {[0, 45, 90, 135, 180, 225, 270, 315].map((a) => (
-          <line key={a} x1="0" y1="0" x2={10 * Math.cos((a * Math.PI) / 180)} y2={10 * Math.sin((a * Math.PI) / 180)} stroke="#fdfaf2" strokeWidth="1" opacity="0.8" />
-        ))}
+    <g transform={`translate(0 ${y})`}>
+      <g className="drift-seed" style={{ animationDuration: `${dur}s`, animationDelay: `${delay}s` }}>
+        <g className="bob" style={{ animationDelay: `${delay * 0.7}s` }}>
+          <circle cx="0" cy="0" r="2.5" fill="#fdfaf2" />
+          {[0, 45, 90, 135, 180, 225, 270, 315].map((a) => (
+            <line key={a} x1="0" y1="0" x2={13 * Math.cos((a * Math.PI) / 180)} y2={13 * Math.sin((a * Math.PI) / 180)} stroke="#fdfaf2" strokeWidth="1.4" opacity="0.85" />
+          ))}
+        </g>
       </g>
     </g>
   );

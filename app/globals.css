@@ -55,7 +55,7 @@ body {
    left-to-right); the rest of the time this wrapper sits still */
 @keyframes gust-wave {
   0%, 78%, 100% { transform: rotate(0deg); }
-  84% { transform: rotate(3.6deg); }
+  84% { transform: rotate(5deg); }
   91% { transform: rotate(-1deg); }
 }
 .gust { animation: gust-wave 12s ease-in-out infinite; transform-box: view-box; }
