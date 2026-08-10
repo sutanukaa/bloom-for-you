@@ -4,6 +4,16 @@ import { useEffect, useState } from "react";
 import { Plant } from "@/components/Plant";
 import { stageAt, timeLeft, type Flower, type Stage } from "@/lib/seed";
 
+// sprouts that take root as waterings accumulate — each threshold adds one
+const WATERED_SPROUTS: { at: number; src: string; pos: React.CSSProperties; h: number }[] = [
+  { at: 1, src: "/grass.png", pos: { left: "3.5rem" }, h: 44 },
+  { at: 2, src: "/grass.png", pos: { right: "4rem" }, h: 40 },
+  { at: 4, src: "/flower1.png", pos: { left: "5.5rem" }, h: 62 },
+  { at: 7, src: "/flower3.png", pos: { right: "6rem" }, h: 70 },
+  { at: 10, src: "/grass.png", pos: { left: "8rem" }, h: 38 },
+  { at: 14, src: "/flower4.png", pos: { right: "8.5rem" }, h: 56 },
+];
+
 const STAGE_LINES: Record<Stage, string> = {
   seed: "the seed is tucked in, fast asleep.",
   sprout: "oh! two little leaves.",
@@ -101,11 +111,20 @@ export function Windowsill({
           </div>
         )}
 
-        {/* garden companions */}
+        {/* garden companions — the base pair is always there, and every few
+            waterings a new sprout takes root in the patch: care visibly
+            accumulates (thresholds against the persisted count) */}
         <img src="/flower2.png" alt="" className="windy absolute bottom-0 left-2 h-24 sm:h-32 w-auto pointer-events-none" style={{ animationDelay: "0.6s" }} />
-        <img src="/grass.png" alt="" className="windy absolute bottom-0 left-14 h-12 sm:h-14 w-auto pointer-events-none" style={{ animationDelay: "1.2s" }} />
         <img src="/flower5.png" alt="" className="windy absolute bottom-0 right-2 h-28 sm:h-36 w-auto pointer-events-none" style={{ animationDelay: "0.2s" }} />
-        <img src="/grass.png" alt="" className="windy absolute bottom-0 right-16 h-11 sm:h-13 w-auto pointer-events-none" style={{ animationDelay: "1.8s" }} />
+        {WATERED_SPROUTS.filter((s) => waterings >= s.at).map((s) => (
+          <img
+            key={s.at}
+            src={s.src}
+            alt=""
+            className="rise windy absolute bottom-0 w-auto pointer-events-none"
+            style={{ ...s.pos, height: `${s.h}px`, animationDelay: `0s, ${(s.at % 5) * 0.4}s` }}
+          />
+        ))}
 
         {/* a butterfly keeps the bloomed flower company */}
         {stage === "bloom" && (
@@ -114,7 +133,8 @@ export function Windowsill({
           </div>
         )}
 
-        <div className={wiggle ? "wiggle" : ""}>
+        {/* freshly watered: a brief happy glow along with the wiggle */}
+        <div className={wiggle ? "wiggle" : ""} style={{ filter: wiggle ? "saturate(1.3) brightness(1.06)" : "none", transition: "filter 1s" }}>
           <Plant stage={stage} flower={flower} potPx={130} />
         </div>
       </div>
@@ -137,7 +157,7 @@ export function Windowsill({
           </button>
           <p className="text-ink-soft/70 text-sm mt-2">
             {waterings === 0 ? "it hasn't been watered yet" : `watered ${waterings} time${waterings === 1 ? "" : "s"} with love`}
-            {" "}· watering doesn&apos;t make it grow faster — it just likes the company
+            {" "}· watering won&apos;t make it bloom sooner, but the patch around it grows greener ♡
           </p>
         </>
       ) : !noteOpen ? (
