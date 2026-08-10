@@ -15,6 +15,7 @@ const STAGE_LINES: Record<Stage, string> = {
 export function Windowsill({
   id,
   plantedAt,
+  bloomsAt,
   flower,
   from,
   to,
@@ -23,14 +24,15 @@ export function Windowsill({
 }: {
   id: string;
   plantedAt: string;
+  bloomsAt: string;
   flower: Flower;
   from: string;
   to: string;
   waterings: number;
   note: string | null;
 }) {
-  const [stage, setStage] = useState<Stage>(() => stageAt(plantedAt));
-  const [left, setLeft] = useState(() => timeLeft(plantedAt));
+  const [stage, setStage] = useState<Stage>(() => stageAt(plantedAt, bloomsAt));
+  const [left, setLeft] = useState(() => timeLeft(bloomsAt));
   const [waterings, setWaterings] = useState(initialWaterings);
   const [watering, setWatering] = useState(false);
   const [wiggle, setWiggle] = useState(false);
@@ -40,13 +42,13 @@ export function Windowsill({
   // reload so the server hands over the note
   useEffect(() => {
     const t = setInterval(() => {
-      const s = stageAt(plantedAt);
-      setLeft(timeLeft(plantedAt));
+      const s = stageAt(plantedAt, bloomsAt);
+      setLeft(timeLeft(bloomsAt));
       if (s === "bloom" && stage !== "bloom" && note === null) window.location.reload();
       setStage(s);
-    }, 30_000);
+    }, 15_000);
     return () => clearInterval(t);
-  }, [plantedAt, stage, note]);
+  }, [plantedAt, bloomsAt, stage, note]);
 
   async function water() {
     if (watering) return;

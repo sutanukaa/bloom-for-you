@@ -1,15 +1,13 @@
 import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase";
-import { BLOOM_MS } from "@/lib/seed";
 import { HeroPlant } from "@/components/HeroPlant";
 
 export const dynamic = "force-dynamic";
 
-// seeds planted in the last 3 days are still growing right now
+// seeds that haven't reached their bloom time yet are still growing
 async function growingCount(): Promise<number | null> {
   try {
-    const since = new Date(Date.now() - BLOOM_MS).toISOString();
-    const { count } = await supabaseAdmin.from("seeds").select("id", { count: "exact", head: true }).gte("created_at", since);
+    const { count } = await supabaseAdmin.from("seeds").select("id", { count: "exact", head: true }).gte("blooms_at", new Date().toISOString());
     return count;
   } catch {
     return null;
@@ -31,8 +29,8 @@ export default async function Cover() {
 
       <p className="rise rise-2 text-ink-soft text-xl sm:text-2xl leading-relaxed max-w-lg">
         plant a seed with a secret note inside and send it to someone.
-        it takes <span className="text-ink">3 real days</span> to grow — they can visit and
-        water it, but the note only opens when it blooms.
+        it grows in <span className="text-ink">real time</span> — as slow as you choose —
+        and they can visit and water it, but the note only opens when it blooms.
       </p>
 
       <p className="rise rise-2 hand text-sage-deep text-xl mt-3">good things take time ♡</p>
