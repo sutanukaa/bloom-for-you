@@ -5,6 +5,24 @@ import { FLOWERS, MIN_BLOOM_MS, type Flower } from "@/lib/seed";
 import { Plant } from "@/components/Plant";
 import { SongModal, stopPreview, type Song } from "@/components/SongPicker";
 
+// hand-drawn cutting-chai glass with drifting steam (steam keyframes in globals.css)
+function ChaiCup({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 32 32" className={className} aria-hidden>
+      <g stroke="var(--ink-soft)" strokeWidth="1.6" strokeLinecap="round" fill="none">
+        <path d="M12 9 C 11 7, 13 6, 12 4" className="steam" />
+        <path d="M17 9 C 16 7, 18 6, 17 3.5" className="steam steam-2" />
+      </g>
+      <path
+        d="M9 12 h11 l-1.5 12 a2 2 0 0 1 -2 1.8 h-4 a2 2 0 0 1 -2 -1.8 Z"
+        fill="#fffdf8" stroke="var(--ink)" strokeWidth="1.8" strokeLinejoin="round"
+      />
+      <path d="M10 15.5 h9" stroke="var(--terracotta)" strokeWidth="2.5" strokeLinecap="round" />
+      <path d="M20 14 c 4 0, 4 6, -0.8 6.5" fill="none" stroke="var(--ink)" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 // little line icons for the attach row (stroke style matches the garden's linework)
 const ICON = {
   image: (
@@ -49,6 +67,8 @@ export function PlantForm() {
   const [mediaPreview, setMediaPreview] = useState("");
   const [busy, setBusy] = useState(false);
   const [link, setLink] = useState("");
+  // after planting: a chai appeal → a little ribbon-tying beat → the link
+  const [stage, setStage] = useState<"chai" | "wrapping" | "link">("chai");
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState("");
 
@@ -84,6 +104,53 @@ export function PlantForm() {
     } finally {
       setBusy(false);
     }
+  }
+
+  if (link && stage === "chai") {
+    return (
+      <div className="rise w-full max-w-md text-center">
+        <ChaiCup className="w-20 h-20 mx-auto mb-1" />
+        <p className="hand text-3xl text-ink mb-3">one tiny thing ♡</p>
+        <p className="text-ink-soft leading-relaxed mb-1">
+          your seed is tucked into the soil. keeping this garden growing — the
+          servers, the sunshine, the pixels — costs a little, and a chai from
+          you would help so much.
+        </p>
+        <p className="text-ink-soft leading-relaxed mb-6">
+          and if you can&apos;t right now, that&apos;s completely okay too.
+          your seed grows either way ♡
+        </p>
+        <a
+          href="https://buymeachai.in/sutanukachaa"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 rounded-full bg-blush/80 text-ink px-8 py-3 text-lg shadow-[3px_4px_0_0_rgba(46,59,46,0.25)] hover:-translate-y-0.5 hover:rotate-[-1deg] transition-transform"
+        >
+          buy me a chai ☕
+        </a>
+        <div className="mt-4">
+          <button
+            onClick={() => {
+              setStage("wrapping");
+              setTimeout(() => setStage("link"), 1600);
+            }}
+            className="text-ink-soft underline underline-offset-4 decoration-ink/30 hover:text-ink transition-colors cursor-pointer"
+          >
+            here&apos;s your link →
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (link && stage === "wrapping") {
+    return (
+      <div className="py-8 text-center">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/sprout.png" alt="" className="sway w-20 mx-auto mb-3" />
+        <p className="hand text-3xl text-ink">tying a ribbon around the stem…</p>
+      </div>
+    );
   }
 
   if (link) {
