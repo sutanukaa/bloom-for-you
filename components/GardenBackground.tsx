@@ -75,7 +75,9 @@ export function GardenBackground() {
   const [kicked, setKicked] = useState<number | null>(null);
 
   useEffect(() => {
-    const tick = () => setPeriod(periodOf(new Date().getHours()));
+    // ?time=night|dusk|morning|day previews any hour without waiting for it
+    const forced = new URLSearchParams(window.location.search).get("time") as Period | null;
+    const tick = () => setPeriod(forced && forced in SKIES ? forced : periodOf(new Date().getHours()));
     tick();
     const t = setInterval(tick, 60_000);
     return () => clearInterval(t);
