@@ -72,19 +72,21 @@ export function startAmbience() {
   src.loop = true;
   const lp = ctx.createBiquadFilter();
   lp.type = "lowpass";
-  lp.frequency.value = 380;
+  // cutoff sits high enough to be audible on laptop speakers (pure low
+  // rumble disappears on small drivers)
+  lp.frequency.value = 750;
   lp.Q.value = 0.4;
   const windGain = ctx.createGain();
-  windGain.gain.value = 0.05;
+  windGain.gain.value = 0.11;
 
   const lfo = ctx.createOscillator();
   lfo.frequency.value = 0.06; // one gust every ~16s
   const lfoToFreq = ctx.createGain();
-  lfoToFreq.gain.value = 220; // cutoff sweeps 160..600Hz
+  lfoToFreq.gain.value = 450; // cutoff sweeps 300..1200Hz — the gust "opens up"
   lfo.connect(lfoToFreq);
   lfoToFreq.connect(lp.frequency);
   const lfoToGain = ctx.createGain();
-  lfoToGain.gain.value = 0.022; // level swells with the gust
+  lfoToGain.gain.value = 0.05; // level swells with the gust
   lfo.connect(lfoToGain);
   lfoToGain.connect(windGain.gain);
 
