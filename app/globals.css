@@ -51,6 +51,63 @@ body {
 }
 .cloud { animation: amble 90s linear infinite; }
 
+/* a gust ripples through every ~12s (delays staggered by x, so it travels
+   left-to-right); the rest of the time this wrapper sits still */
+@keyframes gust-wave {
+  0%, 78%, 100% { transform: rotate(0deg); }
+  84% { transform: rotate(3.6deg); }
+  91% { transform: rotate(-1deg); }
+}
+.gust { animation: gust-wave 12s ease-in-out infinite; transform-box: view-box; }
+
+/* poked flower springs about, then settles */
+@keyframes kick {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(-10deg); }
+  55% { transform: rotate(7deg); }
+  80% { transform: rotate(-3deg); }
+  100% { transform: rotate(0deg); }
+}
+.kicked { animation: kick 0.75s ease-in-out; transform-box: view-box; }
+.flower-hit { cursor: pointer; }
+
+/* butterflies wander the sky: long meander + wing flap */
+@keyframes meander {
+  0% { transform: translateX(-60px) translateY(0); }
+  20% { transform: translateX(320px) translateY(-70px); }
+  40% { transform: translateX(650px) translateY(30px); }
+  60% { transform: translateX(980px) translateY(-90px); }
+  80% { transform: translateX(1320px) translateY(-10px); }
+  100% { transform: translateX(1700px) translateY(-60px); }
+}
+.butterfly { animation: meander linear infinite; }
+@keyframes flap { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(0.35, 1); } }
+.flap { animation: flap 0.35s ease-in-out infinite; }
+
+/* dandelion seeds ride the wind, bobbing as they go */
+@keyframes drift-x {
+  from { transform: translateX(-40px); }
+  to { transform: translateX(1680px); }
+}
+.drift-seed { animation: drift-x linear infinite; }
+@keyframes bob {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-34px) rotate(24deg); }
+}
+.bob { animation: bob 3.2s ease-in-out infinite; }
+
+/* fireflies pulse and wander a little */
+@keyframes firefly-glow {
+  0%, 100% { opacity: 0.15; transform: translate(0, 0); }
+  40% { opacity: 1; transform: translate(14px, -10px); }
+  70% { opacity: 0.4; transform: translate(-8px, 6px); }
+}
+.firefly { animation: firefly-glow 5s ease-in-out infinite; transform-box: view-box; }
+
+/* stars twinkle */
+@keyframes twinkle { 0%, 100% { opacity: 0.25; } 50% { opacity: 1; } }
+.twinkle { animation: twinkle 2.8s ease-in-out infinite; }
+
 .hand {
   /* the "display voice": soft storybook serif, italic */
   font-family: var(--font-hand), Georgia, serif;
