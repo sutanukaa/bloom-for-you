@@ -307,6 +307,13 @@ export function Windowsill({
             className="paper-card relative bg-[#fffdf8] max-w-md w-full rounded-3xl p-8 shadow-2xl text-center border border-ink/10"
             onClick={(e) => e.stopPropagation()}
           >
+            <button
+              onClick={declineInvite}
+              aria-label="close"
+              className="absolute top-3 right-4 text-ink-soft hover:text-ink text-2xl leading-none cursor-pointer"
+            >
+              ✕
+            </button>
             {invite === "asking" ? (
               <>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
