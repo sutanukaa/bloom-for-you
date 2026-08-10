@@ -116,8 +116,8 @@ export function GardenBackground() {
           ))}
 
         {/* clouds */}
-        <img src="/cloud1.png" alt="" className="cloud absolute w-[16vw] min-w-36" style={{ top: "9%", animationDuration: "80s", opacity: night ? 0.25 : 0.9 }} />
-        <img src="/cloud2.png" alt="" className="cloud absolute w-[11vw] min-w-28" style={{ top: "3%", animationDuration: "110s", animationDelay: "-40s", opacity: night ? 0.2 : 0.75 }} />
+        <img src="/cloud1.png" alt="" className="cloud absolute w-[15vw] min-w-32" style={{ top: "9%", animationDuration: "80s", opacity: night ? 0.25 : 0.9 }} />
+        <img src="/cloud1.png" alt="" className="cloud absolute w-[9vw] min-w-24" style={{ top: "3%", animationDuration: "110s", animationDelay: "-40s", opacity: night ? 0.2 : 0.7 }} />
 
         {/* butterflies by day (they sleep at night) */}
         {!night && (
@@ -149,8 +149,8 @@ export function GardenBackground() {
         {/* bushes breathing in the wind */}
         {/* mirror on a wrapper — an inline scaleX on the img itself would be
             overridden by the sway animation's transform */}
-        <img src="/bush1.png" alt="" className="windy-slow absolute bottom-[-4vh] left-[-3vw] w-[22vw] min-w-44" />
-        <div className="absolute bottom-[-5vh] right-[-4vw] w-[26vw] min-w-52" style={{ transform: "scaleX(-1)" }}>
+        <img src="/bush1.png" alt="" className="windy-slow absolute bottom-[-3vh] left-[-2vw] w-[13vw] min-w-28" />
+        <div className="absolute bottom-[-3vh] right-[-2vw] w-[15vw] min-w-32" style={{ transform: "scaleX(-1)" }}>
           <img src="/bush1.png" alt="" className="windy-slow w-full" style={{ animationDelay: "1.5s" }} />
         </div>
         <img src="/bush1.png" alt="" className="windy-slow absolute bottom-[-3vh] left-[38vw] w-[13vw] min-w-28" style={{ animationDelay: "0.7s" }} />
