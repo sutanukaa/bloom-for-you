@@ -165,6 +165,15 @@ body {
 }
 .sway { animation: sway 5s ease-in-out infinite; transform-origin: 50% 100%; }
 
+/* the watering can swings in and tips to pour */
+@keyframes pour {
+  0% { opacity: 0; transform: translate(-14px, -10px) rotate(-16deg); }
+  30% { opacity: 1; transform: translate(0, 0) rotate(0deg); }
+  55% { transform: rotate(7deg); }
+  100% { opacity: 1; transform: rotate(5deg); }
+}
+.pour { animation: pour 1.4s ease-out both; transform-origin: 30% 75%; }
+
 /* water droplets falling from the can */
 @keyframes drip {
   0% { opacity: 0; transform: translateY(0); }

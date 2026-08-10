@@ -77,12 +77,12 @@ export function Windowsill({
       .then((r) => r.json())
       .then((d) => typeof d.waterings === "number" && setWaterings(d.waterings))
       .catch(() => {});
-    // droplets fall, then the plant does a happy wiggle
+    // the can pours, then the plant does a happy wiggle
     setTimeout(() => {
       setWatering(false);
       setWiggle(true);
       setTimeout(() => setWiggle(false), 1100);
-    }, 1000);
+    }, 1600);
   }
 
   return (
@@ -96,14 +96,15 @@ export function Windowsill({
           (fixed height, bottom-anchored so nothing jumps between stages) */}
       {/* eslint-disable @next/next/no-img-element */}
       <div className="relative mt-4 flex items-end justify-center h-80 sm:h-[26rem] w-72 sm:w-96">
-        {/* falling droplets while watering */}
+        {/* the watering can tips in over the pot and pours */}
         {watering && (
-          <div className="absolute top-10 left-1/2 -translate-x-1/2 z-10" aria-hidden>
+          <div className="pour absolute top-6 left-1/2 z-10" style={{ marginLeft: "-8.5rem" }} aria-hidden>
+            <img src="/water-can.png" alt="" className="w-28 sm:w-32" />
             {[0, 1, 2].map((i) => (
               <span
                 key={i}
-                className="drip absolute text-lg"
-                style={{ left: `${(i - 1) * 16}px`, animationDelay: `${i * 0.15}s`, color: "#6d9ec1" }}
+                className="drip absolute text-base"
+                style={{ right: `${-4 + i * 10}px`, top: "58%", animationDelay: `${0.3 + i * 0.18}s`, color: "#6d9ec1" }}
               >
                 💧
               </span>
