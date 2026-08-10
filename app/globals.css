@@ -38,6 +38,12 @@ body {
   cursor: url("/cursor-sprout.svg") 4 4, auto;
 }
 
+/* ?cursor=demo hides the real cursor — CursorDemo draws it in-page for recordings */
+html.demo-cursor,
+html.demo-cursor * {
+  cursor: none !important;
+}
+
 /* keep a text caret where you actually type */
 input,
 textarea,

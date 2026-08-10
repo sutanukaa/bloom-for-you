@@ -3,6 +3,7 @@ import { Fraunces, Karla } from "next/font/google";
 import "./globals.css";
 import { GardenBackground } from "@/components/GardenBackground";
 import { AmbienceToggle } from "@/components/AmbienceToggle";
+import { CursorDemo } from "@/components/CursorDemo";
 
 // A different soul from the scrapbook: soft storybook serif + clean rounded body.
 const fraunces = Fraunces({ variable: "--font-hand", subsets: ["latin"], style: ["normal", "italic"] });
@@ -23,6 +24,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <GardenBackground />
         {children}
         <AmbienceToggle />
+        <CursorDemo />
       </body>
     </html>
   );
