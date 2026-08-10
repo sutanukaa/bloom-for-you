@@ -91,6 +91,26 @@ const WATERED_SPROUTS: { at: number; src: string; pos: React.CSSProperties; h: n
   { at: 14, src: "/flower4.png", pos: { right: "8.5rem" }, h: 56 },
 ];
 
+// the wait, in big friendly numbers — days only appear when there are some
+function Countdown({ ms }: { ms: number }) {
+  const total = Math.max(0, Math.floor(ms / 1000));
+  const d = Math.floor(total / 86_400);
+  const h = Math.floor((total % 86_400) / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = total % 60;
+  const parts = d > 0 ? [[d, "days"], [h, "hrs"], [m, "min"], [s, "sec"]] : [[h, "hrs"], [m, "min"], [s, "sec"]];
+  return (
+    <div className="flex items-end justify-center gap-3 mt-2" aria-label="time until bloom">
+      {parts.map(([n, label]) => (
+        <div key={label} className="flex flex-col items-center">
+          <span className="hand text-4xl text-ink leading-none tabular-nums">{String(n).padStart(2, "0")}</span>
+          <span className="text-ink-soft/80 text-[11px] tracking-widest uppercase mt-0.5">{label}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 const STAGE_LINES: Record<Stage, string> = {
   seed: "the seed is tucked in, fast asleep.",
   sprout: "oh! two little leaves.",
@@ -128,6 +148,15 @@ export function Windowsill({
 }) {
   const [stage, setStage] = useState<Stage>(() => stageAt(plantedAt, bloomsAt));
   const [left, setLeft] = useState(() => timeLeft(bloomsAt));
+  // ticks every second for the countdown (starts at 0 so SSR and first client
+  // render agree; the real clock arrives right after mount)
+  const [now, setNow] = useState(0);
+
+  useEffect(() => {
+    setNow(Date.now());
+    const t = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(t);
+  }, []);
   const [waterings, setWaterings] = useState(initialWaterings);
   const [watering, setWatering] = useState(false);
   const [wiggle, setWiggle] = useState(false);
@@ -252,7 +281,11 @@ export function Windowsill({
       {stage !== "bloom" ? (
         <div className="glass-pill backdrop-blur-sm border border-ink/10 rounded-2xl px-6 py-4 mt-8 shadow-[2px_4px_14px_rgba(46,59,46,0.12)]">
           <p className="hand text-2xl text-ink">{STAGE_LINES[stage]}</p>
-          <p className="text-ink-soft mt-1">
+
+          {/* the countdown, ticking every second */}
+          {now > 0 && <Countdown ms={new Date(bloomsAt).getTime() - now} />}
+
+          <p className="text-ink-soft mt-2">
             blooms in {left || "a moment"} — there&apos;s a note inside, but it opens only when the flower does.
           </p>
           <p className="text-ink-soft/80 text-sm mt-2">
