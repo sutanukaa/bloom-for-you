@@ -105,17 +105,38 @@ export function GardenBackground() {
       {/* sky */}
       <div
         className="absolute inset-0"
-        style={{ background: `linear-gradient(180deg, ${top} 0%, ${mid} 55%, ${bot} 100%)`, transition: "background 2s" }}
+        style={{ background: `linear-gradient(180deg, ${top} 0%, ${mid} 55%, ${bot} 100%)`, transition: "background 8s" }}
       />
 
       {/* everything painted lives under one dimmer so night actually darkens it */}
-      <div className="absolute inset-0" style={{ filter: SCENERY_FILTER[period], transition: "filter 2s" }}>
-        {/* sun / moon */}
+      <div className="absolute inset-0" style={{ filter: SCENERY_FILTER[period], transition: "filter 8s" }}>
+        {/* sun and moon are both always mounted; the hour moves them, so at
+            the boundaries the sun visibly sets and the moon rises (12s glide) */}
         <img
-          src={night ? "/moon.png" : "/sun.png"}
+          src="/sun.png"
           alt=""
           className="absolute w-[13vw] min-w-28 max-w-52"
-          style={{ right: "4%", top: "4%", opacity: 0.95, filter: night ? "drop-shadow(0 0 24px rgba(240,238,215,0.45))" : undefined }}
+          style={{
+            right: period === "morning" ? "16%" : "4%",
+            top: period === "dusk" ? "58%" : "4%",
+            transform: night ? "translateY(90vh)" : undefined,
+            opacity: night ? 0 : 0.95,
+            filter: period === "dusk" ? "saturate(1.4) hue-rotate(-18deg) drop-shadow(0 0 30px rgba(240,160,100,0.5))" : undefined,
+            transition: "all 12s ease-in-out",
+          }}
+        />
+        <img
+          src="/moon.png"
+          alt=""
+          className="absolute w-[11vw] min-w-24 max-w-44"
+          style={{
+            right: "6%",
+            top: "4%",
+            transform: night ? "translateY(0)" : "translateY(110vh)",
+            opacity: night ? 0.95 : 0,
+            filter: "drop-shadow(0 0 24px rgba(240,238,215,0.45))",
+            transition: "all 12s ease-in-out",
+          }}
         />
         {night &&
           STARS.map((s, i) => (
@@ -208,7 +229,7 @@ export function GardenBackground() {
           style={{
             background: night ? "#26364e" : period === "dusk" ? "#e9a6b0" : "#f3d98b",
             opacity: night ? 0.1 : 0.08,
-            transition: "all 2s",
+            transition: "all 8s",
           }}
         />
       )}

@@ -22,6 +22,15 @@ function makeNoiseBuffer(a: AudioContext, seconds: number): AudioBuffer {
   return buf;
 }
 
+// night here = the garden's night (matches GardenBackground's periodOf,
+// including the ?time= preview override)
+function isNight(): boolean {
+  const forced = new URLSearchParams(window.location.search).get("time");
+  if (forced) return forced === "night";
+  const h = new Date().getHours();
+  return h >= 20 || h < 5;
+}
+
 // one little trill: 2-5 quick rising chirps on a sine, panned somewhere in the trees
 function chirp(a: AudioContext, out: GainNode) {
   const t0 = a.currentTime + 0.05;
@@ -47,13 +56,43 @@ function chirp(a: AudioContext, out: GainNode) {
   }
 }
 
-function scheduleBirds(a: AudioContext, out: GainNode) {
+// a cricket: a fast train of tiny high pulses (that classic "chrrp-chrrp")
+function cricket(a: AudioContext, out: GainNode) {
+  const t0 = a.currentTime + 0.05;
+  const pan = a.createStereoPanner();
+  pan.pan.value = Math.random() * 1.6 - 0.8;
+  pan.connect(out);
+  const pulses = 6 + Math.floor(Math.random() * 8);
+  const f = 4200 + Math.random() * 500;
+  for (let n = 0; n < pulses; n++) {
+    const t = t0 + n * 0.036;
+    const osc = a.createOscillator();
+    osc.type = "sine";
+    osc.frequency.value = f;
+    const g = a.createGain();
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(0.014, t + 0.006);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.028);
+    osc.connect(g);
+    g.connect(pan);
+    osc.start(t);
+    osc.stop(t + 0.032);
+  }
+}
+
+// birds by day, crickets after dark
+function scheduleNature(a: AudioContext, out: GainNode) {
+  const night = isNight();
   birdTimer = setTimeout(() => {
-    chirp(a, out);
-    // sometimes a second bird answers
-    if (Math.random() < 0.35) setTimeout(() => running && ctx && master && chirp(ctx, master), 600 + Math.random() * 900);
-    if (running) scheduleBirds(a, out);
-  }, 2500 + Math.random() * 6500);
+    if (isNight()) {
+      cricket(a, out);
+    } else {
+      chirp(a, out);
+      // sometimes a second bird answers
+      if (Math.random() < 0.35) setTimeout(() => running && ctx && master && chirp(ctx, master), 600 + Math.random() * 900);
+    }
+    if (running) scheduleNature(a, out);
+  }, night ? 700 + Math.random() * 1800 : 2500 + Math.random() * 6500);
 }
 
 export function startAmbience() {
@@ -97,7 +136,7 @@ export function startAmbience() {
   lfo.start();
 
   running = true;
-  scheduleBirds(ctx, master);
+  scheduleNature(ctx, master);
   localStorage.setItem("bloom-ambience", "1");
 }
 
