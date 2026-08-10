@@ -3,13 +3,13 @@ import type { Flower, Stage } from "@/lib/seed";
 // Hand-drawn-style inline SVG plant, one drawing per stage.
 // ponytail: placeholder art — swap each stage for a generated PNG in /public/plants/<flower>/<stage>.png later.
 
-const PETALS: Record<Flower, string> = {
+export const PETALS: Record<Flower, string> = {
   sunflower: "#e8b64c",
   tulip: "#e9a6b0",
   rose: "#d16a6a",
   daisy: "#fdfaf2",
 };
-const CENTERS: Record<Flower, string> = {
+export const CENTERS: Record<Flower, string> = {
   sunflower: "#8a6238",
   tulip: "#e9a6b0",
   rose: "#b95252",
