@@ -42,7 +42,9 @@ export function HeroPlant() {
           and sized so the POT is identical in all of them (no max-h clamping —
           that shrank the tall bloom frames and made the soil frames look huge);
           only the current one is visible, easing in with a little upward swell */}
-      <div className="relative w-44 h-80 sm:h-96">
+      {/* tall enough for the widest bloom (the sunflower renders ~363px high
+          at pot width 118 — h-80 clipped it into the content below on mobile) */}
+      <div className="relative w-44 h-[23rem] sm:h-96">
         {STAGES.map(({ stage }, s) => (
           // eslint-disable-next-line @next/next/no-img-element
           <img
