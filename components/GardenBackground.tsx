@@ -147,10 +147,16 @@ export function GardenBackground() {
         />
 
         {/* bushes breathing in the wind */}
+        {/* mirror on a wrapper — an inline scaleX on the img itself would be
+            overridden by the sway animation's transform */}
         <img src="/bush1.png" alt="" className="windy-slow absolute bottom-[-4vh] left-[-3vw] w-[22vw] min-w-44" />
-        <img src="/bush1.png" alt="" className="windy-slow absolute bottom-[-5vh] right-[-4vw] w-[26vw] min-w-52" style={{ animationDelay: "1.5s", transform: "scaleX(-1)" }} />
+        <div className="absolute bottom-[-5vh] right-[-4vw] w-[26vw] min-w-52" style={{ transform: "scaleX(-1)" }}>
+          <img src="/bush1.png" alt="" className="windy-slow w-full" style={{ animationDelay: "1.5s" }} />
+        </div>
         <img src="/bush1.png" alt="" className="windy-slow absolute bottom-[-3vh] left-[38vw] w-[13vw] min-w-28" style={{ animationDelay: "0.7s" }} />
-        <img src="/bush1.png" alt="" className="windy-slow absolute bottom-[-3vh] left-[58vw] w-[11vw] min-w-24" style={{ animationDelay: "2.2s", transform: "scaleX(-1)" }} />
+        <div className="absolute bottom-[-3vh] left-[58vw] w-[11vw] min-w-24" style={{ transform: "scaleX(-1)" }}>
+          <img src="/bush1.png" alt="" className="windy-slow w-full" style={{ animationDelay: "2.2s" }} />
+        </div>
 
         {/* grass tufts */}
         {GRASS.map((g, i) => (
