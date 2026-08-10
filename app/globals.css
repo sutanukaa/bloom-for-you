@@ -111,57 +111,6 @@ body {
 @keyframes twinkle { 0%, 100% { opacity: 0.25; } 50% { opacity: 1; } }
 .twinkle { animation: twinkle 2.8s ease-in-out infinite; }
 
-/* ---------- the hero plant's continuous growth (one shared 9s timeline) ----------
-   0-8%   nothing (a beat of anticipation)
-   8-38%  stem draws itself upward
-   ~25%+  leaves unfurl, lowest first
-   52-78% the bloom swells open (with a happy overshoot)
-   78-93% holds in full bloom
-   93-100% fades out, then the loop restarts as the next flower */
-.grow-cycle { animation: grow-fade 9s linear infinite; }
-@keyframes grow-fade {
-  0% { opacity: 0; }
-  5%, 92% { opacity: 1; }
-  100% { opacity: 0; }
-}
-
-.grow-stem {
-  stroke-dasharray: 1;
-  animation: grow-stem 9s linear infinite;
-}
-@keyframes grow-stem {
-  0%, 8% { stroke-dashoffset: 1; }
-  38%, 100% { stroke-dashoffset: 0; }
-}
-
-.grow-leaf-1, .grow-leaf-2 {
-  animation: grow-part 9s infinite;
-  transform-box: fill-box;
-}
-.grow-leaf-1 { transform-origin: 100% 50%; animation-name: grow-leaf-1; }
-.grow-leaf-2 { transform-origin: 0% 50%; animation-name: grow-leaf-2; }
-@keyframes grow-leaf-1 {
-  0%, 24% { transform: scale(0) rotate(-30deg); }
-  34% { transform: scale(1.15) rotate(4deg); }
-  40%, 100% { transform: scale(1) rotate(0deg); }
-}
-@keyframes grow-leaf-2 {
-  0%, 33% { transform: scale(0) rotate(30deg); }
-  43% { transform: scale(1.15) rotate(-4deg); }
-  49%, 100% { transform: scale(1) rotate(0deg); }
-}
-
-.grow-bloom {
-  animation: grow-bloom 9s infinite;
-  transform-box: fill-box;
-  transform-origin: 50% 60%;
-}
-@keyframes grow-bloom {
-  0%, 52% { transform: scale(0) rotate(-40deg); }
-  70% { transform: scale(1.12) rotate(6deg); }
-  78%, 100% { transform: scale(1) rotate(0deg); }
-}
-
 .hand {
   /* the "display voice": soft storybook serif, italic */
   font-family: var(--font-hand), Georgia, serif;
