@@ -47,7 +47,7 @@ export default async function Cover() {
             <span className="transition-transform group-hover:translate-x-1">→</span>
           </Link>
 
-          <div className="rise rise-3 paper-card flex flex-col items-center md:items-start gap-1 mt-6 bg-[#fffdf8]/75 backdrop-blur-sm border border-ink/10 rounded-2xl px-5 py-3 shadow-[2px_4px_14px_rgba(46,59,46,0.12)]">
+          <div className="rise rise-3 glass-pill flex flex-col items-center md:items-start gap-1 mt-6 backdrop-blur-sm border border-ink/10 rounded-2xl px-5 py-3 shadow-[2px_4px_14px_rgba(46,59,46,0.12)]">
             {count ? (
               <p className="text-ink-soft text-sm">
                 🌱 {count} seed{count === 1 ? " is" : "s are"} growing right now

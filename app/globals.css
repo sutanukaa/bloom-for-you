@@ -154,6 +154,16 @@ button:disabled,
 [data-garden="night"] select {
   color: #2e3b2e;
 }
+/* frosted pills that follow the hour: paper by day, dark glass at night
+   (the ink tokens flip with them, so text stays readable both ways) */
+.glass-pill {
+  background: rgba(255, 253, 248, 0.78);
+}
+[data-garden="night"] .glass-pill {
+  background: rgba(28, 38, 33, 0.62);
+  border-color: rgba(253, 250, 242, 0.16);
+}
+
 /* light paper cards keep daytime ink at night (they don't darken with the sky) */
 [data-garden="night"] .paper-card {
   --ink: #2e3b2e;
