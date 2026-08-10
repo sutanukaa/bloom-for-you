@@ -93,11 +93,25 @@ function Butterfly({ delay, dur, color, y }: { delay: number; dur: number; color
   return (
     <g transform={`translate(0 ${y})`}>
       <g className="butterfly" style={{ animationDuration: `${dur}s`, animationDelay: `${delay}s` }}>
-        <g className="flap">
-          <ellipse cx="-9" cy="0" rx="12" ry="8" fill={color} transform="rotate(-20)" />
-          <ellipse cx="9" cy="0" rx="12" ry="8" fill={color} transform="rotate(20)" />
-          <ellipse cx="0" cy="2" rx="2.6" ry="9" fill="#4a4038" />
+        {/* each wing pair flaps toward the body (scaleX around its body-side edge) */}
+        <g className="flap-l">
+          {/* forewing + hindwing, left */}
+          <path d="M-1 -3 C -8 -20, -24 -24, -28 -12 C -30 -3, -16 1, -1 0 Z" fill={color} stroke="#4a4038" strokeOpacity="0.35" strokeWidth="1.2" />
+          <path d="M-1 1 C -12 2, -20 8, -17 16 C -14 22, -4 16, -1 5 Z" fill={color} stroke="#4a4038" strokeOpacity="0.35" strokeWidth="1.2" />
+          <circle cx="-17" cy="-11" r="2.6" fill="#fdfaf2" opacity="0.85" />
+          <circle cx="-11" cy="10" r="1.8" fill="#fdfaf2" opacity="0.85" />
         </g>
+        <g className="flap-r">
+          <path d="M1 -3 C 8 -20, 24 -24, 28 -12 C 30 -3, 16 1, 1 0 Z" fill={color} stroke="#4a4038" strokeOpacity="0.35" strokeWidth="1.2" />
+          <path d="M1 1 C 12 2, 20 8, 17 16 C 14 22, 4 16, 1 5 Z" fill={color} stroke="#4a4038" strokeOpacity="0.35" strokeWidth="1.2" />
+          <circle cx="17" cy="-11" r="2.6" fill="#fdfaf2" opacity="0.85" />
+          <circle cx="11" cy="10" r="1.8" fill="#fdfaf2" opacity="0.85" />
+        </g>
+        {/* body + antennae */}
+        <ellipse cx="0" cy="2" rx="2" ry="10" fill="#4a4038" />
+        <circle cx="0" cy="-9" r="2.6" fill="#4a4038" />
+        <path d="M-1 -11 C -4 -16, -7 -18, -9 -17" stroke="#4a4038" strokeWidth="1.2" fill="none" strokeLinecap="round" />
+        <path d="M1 -11 C 4 -16, 7 -18, 9 -17" stroke="#4a4038" strokeWidth="1.2" fill="none" strokeLinecap="round" />
       </g>
     </g>
   );

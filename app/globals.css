@@ -81,8 +81,11 @@ body {
   100% { transform: translateX(1700px) translateY(-60px); }
 }
 .butterfly { animation: meander linear infinite; }
-@keyframes flap { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(0.35, 1); } }
-.flap { animation: flap 0.35s ease-in-out infinite; }
+/* wings fold toward the body: each pair scales around its body-side edge
+   (fill-box, or the origin would be the middle of the whole 1600x900 view) */
+@keyframes flap { 0%, 100% { transform: scaleX(1); } 50% { transform: scaleX(0.25); } }
+.flap-l { animation: flap 0.4s ease-in-out infinite; transform-box: fill-box; transform-origin: right center; }
+.flap-r { animation: flap 0.4s ease-in-out infinite; transform-box: fill-box; transform-origin: left center; }
 
 /* dandelion seeds ride the wind, bobbing as they go */
 @keyframes drift-x {
