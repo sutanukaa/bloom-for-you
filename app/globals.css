@@ -34,6 +34,33 @@ body {
   font-family: var(--font-body), ui-rounded, system-ui, sans-serif;
   /* the sky behind the painted garden (GardenBackground draws the scenery) */
   background-color: #dcebee;
+  /* a little trowel follows you around (tip is the click point) */
+  cursor: url("/cursor-trowel.svg") 3 3, auto;
+}
+
+/* keep a text caret where you actually type */
+input,
+textarea,
+[contenteditable="true"] {
+  cursor: text;
+}
+
+/* the watering can on anything clickable — you can water this */
+a,
+button,
+label,
+summary,
+select,
+[role="button"],
+.cursor-pointer,
+.flower-hit {
+  cursor: url("/cursor-can.svg") 4 6, pointer;
+}
+
+/* …but a disabled button shouldn't tempt you */
+button:disabled,
+[aria-disabled="true"] {
+  cursor: url("/cursor-trowel.svg") 3 3, not-allowed;
 }
 
 /* the wind: everything planted leans from its roots, each at its own pace */

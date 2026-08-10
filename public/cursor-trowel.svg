@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28">
+  <!-- little garden trowel, tip at top-left (the click point) -->
+  <g transform="rotate(45 14 14)">
+    <path d="M14 2 C 10.5 5, 10.5 9, 14 12 C 17.5 9, 17.5 5, 14 2 Z" fill="#b8bcc2" stroke="#2e3b2e" stroke-width="1.4" stroke-linejoin="round"/>
+    <rect x="12.9" y="11.5" width="2.2" height="4" fill="#8a8f96" stroke="#2e3b2e" stroke-width="1"/>
+    <rect x="12" y="15" width="4" height="9" rx="2" fill="#c57a55" stroke="#2e3b2e" stroke-width="1.4"/>
+  </g>
+</svg>
