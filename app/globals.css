@@ -32,16 +32,24 @@
 body {
   color: var(--ink);
   font-family: var(--font-body), ui-rounded, system-ui, sans-serif;
-  background-color: var(--cream);
-  /* misty greenhouse light: pale sky at the top settling into leafy ground,
-     with a faint trellis of leaves tiled behind everything */
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%235f7f58' stroke-opacity='0.09' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M20 30 q10 -14 22 -8 q-2 14 -22 8'/%3E%3Cpath d='M85 80 q-10 -14 -22 -8 q2 14 22 8'/%3E%3Cpath d='M95 25 q6 10 -2 18'/%3E%3Cpath d='M30 95 q-6 10 2 18'/%3E%3C/g%3E%3C/svg%3E"),
-    linear-gradient(180deg, #e4edf0 0%, var(--cream) 40%, var(--cream-deep) 100%);
-  background-repeat: repeat, no-repeat;
-  background-size: 120px, cover;
-  background-attachment: fixed, fixed;
+  /* the sky behind the painted garden (GardenBackground draws the scenery) */
+  background-color: #dcebee;
 }
+
+/* the wind: everything planted leans and comes back, each at its own pace */
+@keyframes wind {
+  0%, 100% { transform: rotate(-2.2deg); }
+  50% { transform: rotate(2.2deg); }
+}
+.windy { animation: wind 4.5s ease-in-out infinite; transform-box: view-box; }
+.windy-slow { animation: wind 7s ease-in-out infinite; transform-box: view-box; }
+
+/* clouds amble across the whole sky */
+@keyframes amble {
+  from { transform: translateX(-250px); }
+  to { transform: translateX(1700px); }
+}
+.cloud { animation: amble 90s linear infinite; }
 
 .hand {
   /* the "display voice": soft storybook serif, italic */

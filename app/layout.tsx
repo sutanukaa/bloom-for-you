@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces, Karla } from "next/font/google";
 import "./globals.css";
+import { GardenBackground } from "@/components/GardenBackground";
 
 // A different soul from the scrapbook: soft storybook serif + clean rounded body.
 const fraunces = Fraunces({ variable: "--font-hand", subsets: ["latin"], style: ["normal", "italic"] });
@@ -14,7 +15,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${fraunces.variable} ${karla.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <GardenBackground />
+        {children}
+      </body>
     </html>
   );
 }
