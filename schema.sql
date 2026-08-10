@@ -7,8 +7,12 @@ create table if not exists seeds (
   note text not null,
   flower text not null default 'sunflower',
   waterings int not null default 0,
-  blooms_at timestamptz not null default now() + interval '3 days'
+  blooms_at timestamptz not null default now() + interval '3 days',
+  public boolean not null default false
 );
+
+-- whether the bloomed flower is shown in the public garden (names only, never the note)
+-- migration: alter table seeds add column if not exists public boolean not null default false;
 
 -- migration if the table already exists without blooms_at:
 -- alter table seeds add column if not exists blooms_at timestamptz not null default now() + interval '3 days';

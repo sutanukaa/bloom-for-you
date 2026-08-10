@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { Plant } from "@/components/Plant";
 import { stageAt, timeLeft, type Flower, type Stage } from "@/lib/seed";
 
@@ -32,6 +33,7 @@ export function Windowsill({
   waterings: initialWaterings,
   note,
   bloomedOthers = 0,
+  isPublic = false,
 }: {
   id: string;
   plantedAt: string;
@@ -42,6 +44,7 @@ export function Windowsill({
   waterings: number;
   note: string | null;
   bloomedOthers?: number;
+  isPublic?: boolean;
 }) {
   const [stage, setStage] = useState<Stage>(() => stageAt(plantedAt, bloomsAt));
   const [left, setLeft] = useState(() => timeLeft(bloomsAt));
@@ -50,13 +53,37 @@ export function Windowsill({
   const [wiggle, setWiggle] = useState(false);
   const [noteOpen, setNoteOpen] = useState(false);
   const [joined, setJoined] = useState(false);
+  // the "live here forever?" invitation: hidden → asking → planted
+  const [invite, setInvite] = useState<"hidden" | "asking" | "planted">("hidden");
 
-  // a beat after the note unfolds, the garden welcomes the new flower
+  // a beat after the note unfolds, the garden welcomes the new flower —
+  // and 10s in, it asks whether the flower may stay forever (once)
   useEffect(() => {
     if (!noteOpen) return;
     const t = setTimeout(() => setJoined(true), 2200);
-    return () => clearTimeout(t);
-  }, [noteOpen]);
+    const asked = isPublic || localStorage.getItem(`garden-asked-${id}`);
+    const t2 = asked ? undefined : setTimeout(() => setInvite("asking"), 10_000);
+    return () => {
+      clearTimeout(t);
+      if (t2) clearTimeout(t2);
+    };
+  }, [noteOpen, isPublic, id]);
+
+  function declineInvite() {
+    localStorage.setItem(`garden-asked-${id}`, "1");
+    setInvite("hidden");
+  }
+
+  async function acceptInvite() {
+    localStorage.setItem(`garden-asked-${id}`, "1");
+    try {
+      const res = await fetch(`/api/seeds/${id}/public`, { method: "POST" });
+      if (res.ok) setInvite("planted");
+      else setInvite("hidden");
+    } catch {
+      setInvite("hidden");
+    }
+  }
 
   // tick the countdown; if the bloom moment passes while they're watching,
   // reload so the server hands over the note
@@ -180,6 +207,54 @@ export function Windowsill({
           <img src="/dandelion.png" alt="" className="absolute -top-3 -right-3 w-8 pointer-events-none" />
           <p className="hand text-2xl text-[#2e3b2e] whitespace-pre-wrap text-left leading-snug">{note}</p>
           {from.trim() ? <p className="hand text-xl text-[#64735f] text-right mt-4">— {from}</p> : null}
+        </div>
+      )}
+
+      {/* the invitation: may this flower live in the public garden? */}
+      {invite !== "hidden" && (
+        <div className="fixed inset-0 z-50 bg-ink/30 backdrop-blur-sm flex items-center justify-center p-6" onClick={declineInvite}>
+          <div
+            className="paper-card relative bg-[#fffdf8] max-w-md w-full rounded-3xl p-8 shadow-2xl text-center border border-ink/10"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {invite === "asking" ? (
+              <>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={`/${flower}.png`} alt="" className="h-24 w-auto mx-auto mb-3" />
+                <h3 className="hand text-3xl text-ink mb-3">may this flower stay forever?</h3>
+                <p className="text-ink-soft leading-relaxed mb-2">
+                  there&apos;s a little public garden where flowers like this one live on.
+                  anyone wandering by would see your flower and your names —{" "}
+                  <span className="text-ink">never your note</span>, that stays yours alone ♡
+                </p>
+                <p className="text-ink-soft leading-relaxed mb-6">so this memory keeps blooming, forever.</p>
+                <button
+                  onClick={acceptInvite}
+                  className="rounded-full bg-ink text-cream px-8 py-3 text-lg shadow-[3px_4px_0_0_rgba(46,59,46,0.25)] hover:-translate-y-0.5 hover:rotate-[-1deg] transition-transform cursor-pointer"
+                >
+                  yes, let it live in the garden 🌼
+                </button>
+                <div className="mt-3">
+                  <button onClick={declineInvite} className="text-ink-soft underline underline-offset-4 decoration-ink/30 hover:text-ink transition-colors cursor-pointer">
+                    keep it just ours
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <h3 className="hand text-3xl text-ink mb-3">it&apos;s planted ♡</h3>
+                <p className="text-ink-soft leading-relaxed mb-6">
+                  your flower now lives in the garden, with your names beside it — for as long as this little corner of the internet stands.
+                </p>
+                <Link
+                  href="/garden"
+                  className="rounded-full bg-ink text-cream px-8 py-3 text-lg shadow-[3px_4px_0_0_rgba(46,59,46,0.25)] hover:-translate-y-0.5 transition-transform inline-block"
+                >
+                  visit the garden →
+                </Link>
+              </>
+            )}
+          </div>
         </div>
       )}
 

@@ -52,6 +52,10 @@ export default async function Cover() {
               🌱 {count} seed{count === 1 ? " is" : "s are"} growing right now
             </p>
           ) : null}
+
+          <Link href="/garden" className="rise rise-3 hand text-lg text-ink-soft hover:text-ink underline decoration-wavy mt-2">
+            wander the garden →
+          </Link>
         </div>
       </div>
     </main>
