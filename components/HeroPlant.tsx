@@ -17,14 +17,23 @@ const STAGES: { stage: Stage; hold: number }[] = [
 
 export function HeroPlant() {
   const [i, setI] = useState(0);
+  const [flowerIdx, setFlowerIdx] = useState(0);
 
   useEffect(() => {
     const t = setTimeout(() => setI((n) => n + 1), STAGES[i % STAGES.length].hold);
-    return () => clearTimeout(t);
+    // swap the flower only AFTER the bloom frame has fully faded out (the
+    // crossfade is 700ms) — swapping at the wrap flashed the next flower
+    // on the still-visible outgoing bloom
+    const wrapped = i > 0 && i % STAGES.length === 0;
+    const f = wrapped ? setTimeout(() => setFlowerIdx((n) => n + 1), 750) : undefined;
+    return () => {
+      clearTimeout(t);
+      if (f) clearTimeout(f);
+    };
   }, [i]);
 
   const step = i % STAGES.length;
-  const flower = FLOWERS[Math.floor(i / STAGES.length) % FLOWERS.length];
+  const flower = FLOWERS[flowerIdx % FLOWERS.length];
 
   return (
     <div className="pointer-events-none select-none sway" aria-hidden>
