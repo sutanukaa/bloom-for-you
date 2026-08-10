@@ -15,15 +15,16 @@ const SKIES: Record<Period, [string, string, string]> = {
   morning: ["#f6e3c0", "#eef0da", "#e2ecd4"],
   day: ["#dcebee", "#e9f0e0", "#e2ecd4"],
   dusk: ["#e8c4c0", "#ecdcd2", "#dfe8cf"],
-  night: ["#2b3a4e", "#3a4a57", "#42524e"],
+  night: ["#35496b", "#45586e", "#4d6066"],
 };
 
-// dims the painted art itself so the scenery genuinely darkens at night
+// dims the painted art itself so the scenery genuinely darkens at night —
+// but only to "moonlit", never to "gloomy"
 const SCENERY_FILTER: Record<Period, string> = {
   morning: "brightness(1.03) saturate(1.02)",
   day: "none",
   dusk: "brightness(0.94) saturate(0.95) hue-rotate(-6deg)",
-  night: "brightness(0.55) saturate(0.65)",
+  night: "brightness(0.8) saturate(0.85)",
 };
 
 function periodOf(hour: number): Period {
@@ -60,13 +61,15 @@ const GRASS = [
 ];
 
 const FIREFLIES = [
-  { left: 16, bottom: 22, d: 0 }, { left: 33, bottom: 30, d: 1.3 }, { left: 48, bottom: 20, d: 2.6 },
-  { left: 61, bottom: 28, d: 0.7 }, { left: 77, bottom: 21, d: 1.9 }, { left: 90, bottom: 27, d: 3.1 },
+  { left: 16, bottom: 22, d: 0 }, { left: 27, bottom: 34, d: 1.3 }, { left: 38, bottom: 20, d: 2.6 },
+  { left: 48, bottom: 40, d: 0.7 }, { left: 57, bottom: 25, d: 1.9 }, { left: 66, bottom: 36, d: 3.1 },
+  { left: 76, bottom: 21, d: 0.4 }, { left: 85, bottom: 31, d: 2.2 }, { left: 93, bottom: 26, d: 1.1 },
 ];
 
 const STARS = [
-  { left: 12, top: 10 }, { left: 26, top: 18 }, { left: 41, top: 8 },
-  { left: 56, top: 15 }, { left: 70, top: 7 }, { left: 94, top: 24 },
+  { left: 12, top: 10 }, { left: 20, top: 22 }, { left: 26, top: 6 }, { left: 34, top: 16 },
+  { left: 41, top: 8 }, { left: 49, top: 20 }, { left: 56, top: 12 }, { left: 64, top: 5 },
+  { left: 70, top: 17 }, { left: 79, top: 9 }, { left: 87, top: 28 }, { left: 94, top: 20 },
 ];
 
 export function GardenBackground() {
@@ -82,6 +85,12 @@ export function GardenBackground() {
     const t = setInterval(tick, 60_000);
     return () => clearInterval(t);
   }, []);
+
+  // let the page's text tokens follow the hour (globals.css flips the ink
+  // light at night — forest-dark text vanishes against a night sky)
+  useEffect(() => {
+    document.documentElement.dataset.garden = period;
+  }, [period]);
 
   function kick(i: number) {
     setKicked(i);
@@ -106,14 +115,14 @@ export function GardenBackground() {
           src={night ? "/moon.png" : "/sun.png"}
           alt=""
           className="absolute w-[13vw] min-w-28 max-w-52"
-          style={{ right: "4%", top: "4%", opacity: 0.95 }}
+          style={{ right: "4%", top: "4%", opacity: 0.95, filter: night ? "drop-shadow(0 0 24px rgba(240,238,215,0.45))" : undefined }}
         />
         {night &&
           STARS.map((s, i) => (
             <div
               key={i}
               className="twinkle absolute w-1 h-1 rounded-full bg-[#fdfaf2]"
-              style={{ left: `${s.left}%`, top: `${s.top}%`, animationDelay: `${i * 0.6}s` }}
+              style={{ left: `${s.left}%`, top: `${s.top}%`, animationDelay: `${i * 0.6}s`, boxShadow: "0 0 6px 1px rgba(253,250,242,0.8)" }}
             />
           ))}
 
@@ -186,9 +195,8 @@ export function GardenBackground() {
         {/* fireflies wandering low over the garden */}
         {night &&
           FIREFLIES.map((f, i) => (
-            <div key={i} className="firefly absolute" style={{ left: `${f.left}%`, bottom: `${f.bottom}%`, animationDelay: `${f.d}s` }}>
-              <div className="w-4 h-4 rounded-full bg-[#f3e98b] opacity-25 absolute -inset-1" />
-              <div className="w-1.5 h-1.5 rounded-full bg-[#f3e98b]" />
+            <div key={i} className="firefly absolute" style={{ left: `${f.left}%`, bottom: `${f.bottom}%`, animationDelay: `${f.d}s`, animationDuration: `${4.2 + (i % 4) * 0.9}s` }}>
+              <div className="firefly-orb" />
             </div>
           ))}
       </div>
@@ -198,8 +206,8 @@ export function GardenBackground() {
         <div
           className="absolute inset-0"
           style={{
-            background: night ? "#1c2b3a" : period === "dusk" ? "#e9a6b0" : "#f3d98b",
-            opacity: night ? 0.18 : 0.08,
+            background: night ? "#26364e" : period === "dusk" ? "#e9a6b0" : "#f3d98b",
+            opacity: night ? 0.1 : 0.08,
             transition: "all 2s",
           }}
         />
