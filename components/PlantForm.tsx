@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { FLOWERS, MIN_BLOOM_MS, type Flower } from "@/lib/seed";
 import { Plant } from "@/components/Plant";
-import { SongPicker, stopPreview, type Song } from "@/components/SongPicker";
+import { SongModal, stopPreview, type Song } from "@/components/SongPicker";
 
 const FLOWER_LABELS: Record<Flower, string> = {
   sunflower: "sunflower ☀",
@@ -20,6 +20,7 @@ export function PlantForm() {
   const [amount, setAmount] = useState(3);
   const [unit, setUnit] = useState<"minutes" | "hours" | "days">("days");
   const [song, setSong] = useState<Song | null>(null);
+  const [songModal, setSongModal] = useState(false);
   const [media, setMedia] = useState<File | null>(null);
   const [mediaPreview, setMediaPreview] = useState("");
   const [busy, setBusy] = useState(false);
@@ -99,58 +100,99 @@ export function PlantForm() {
         </label>
       </div>
 
-      <label className="text-left">
-        <span className="hand text-xl text-ink">the note inside the seed</span>
-        <textarea
-          value={note}
-          onChange={(e) => setNote(e.target.value)}
-          maxLength={2000}
-          rows={4}
-          placeholder="write something worth waiting 3 days for…"
-          className="mt-1 w-full bg-[#fffdf8] border border-ink/15 rounded-lg px-3 py-2 text-ink resize-none"
-        />
-      </label>
-
       <div className="text-left">
-        <span className="hand text-xl text-ink">tuck something in with the note</span>
-        <p className="text-ink-soft/70 text-sm">a photo, a little video, a song — they stay sealed until it blooms (all optional)</p>
-        <div className="mt-2 flex flex-col gap-2">
-          {media ? (
-            <div className="flex items-center gap-3 bg-cream/70 border border-ink/10 rounded-2xl p-2 pr-3">
-              {media.type.startsWith("video/") ? (
-                <video src={mediaPreview} className="w-12 h-12 rounded-xl object-cover" muted />
-              ) : (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={mediaPreview} alt="" className="w-12 h-12 rounded-xl object-cover" />
+        <span className="hand text-xl text-ink">the note inside the seed</span>
+        {/* the note box carries its own little pockets: previews of whatever
+            was tucked in, and the attach icons in the bottom-left corner */}
+        <div className="mt-1 bg-[#fffdf8] border border-ink/15 rounded-lg focus-within:border-ink/35 transition-colors">
+          <textarea
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            maxLength={2000}
+            rows={4}
+            placeholder="write something worth waiting 3 days for…"
+            className="w-full bg-transparent px-3 py-2 text-ink resize-none outline-none"
+          />
+
+          {/* tiny previews of what's tucked in */}
+          {(media || song) && (
+            <div className="flex items-center gap-2 px-3 pb-1">
+              {media && (
+                <div className="relative group">
+                  {media.type.startsWith("video/") ? (
+                    <video src={mediaPreview} className="w-11 h-11 rounded-lg object-cover" muted />
+                  ) : (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={mediaPreview} alt="" className="w-11 h-11 rounded-lg object-cover" />
+                  )}
+                  {media.type.startsWith("video/") && (
+                    <span className="absolute inset-0 flex items-center justify-center text-white text-xs drop-shadow">▶</span>
+                  )}
+                  <button
+                    onClick={() => pickMedia(null)}
+                    aria-label="remove file"
+                    className="absolute -top-1.5 -right-1.5 rounded-full bg-ink text-cream text-[10px] leading-none flex items-center justify-center cursor-pointer w-[18px] h-[18px]"
+                  >
+                    ✕
+                  </button>
+                </div>
               )}
-              <p className="flex-1 min-w-0 text-left text-ink-soft text-sm truncate">{media.name}</p>
-              <button onClick={() => pickMedia(null)} aria-label="remove file" className="text-ink-soft hover:text-ink text-xl cursor-pointer">
-                ✕
-              </button>
+              {song && (
+                <div className="relative group flex items-center gap-2 bg-cream/70 border border-ink/10 rounded-lg pl-1 pr-2 py-1 max-w-44">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={song.artwork} alt="" className="w-8 h-8 rounded-md" />
+                  <p className="text-ink-soft text-xs truncate">♪ {song.title}</p>
+                  <button
+                    onClick={() => setSong(null)}
+                    aria-label="remove song"
+                    className="absolute -top-1.5 -right-1.5 rounded-full bg-ink text-cream text-[10px] leading-none flex items-center justify-center cursor-pointer w-[18px] h-[18px]"
+                  >
+                    ✕
+                  </button>
+                </div>
+              )}
             </div>
-          ) : (
-            <label className="inline-flex items-center gap-2 bg-[#fffdf8] border border-ink/15 border-dashed rounded-lg px-3 py-2 text-ink-soft hover:text-ink cursor-pointer w-fit">
-              📷 add a photo or video
-              <input
-                type="file"
-                accept="image/*,video/*"
-                className="hidden"
-                onChange={(e) => {
-                  const f = e.target.files?.[0] ?? null;
-                  e.target.value = "";
-                  if (f && f.size > 4 * 1024 * 1024) {
-                    setError("that file is a bit heavy — keep it under 4MB ♡");
-                    return;
-                  }
-                  setError("");
-                  pickMedia(f);
-                }}
-              />
-            </label>
           )}
-          <SongPicker song={song} onPick={setSong} />
+
+          {/* attach icons, bottom-left */}
+          <div className="flex items-center gap-1 px-2 pb-2">
+            {(["image", "video"] as const).map((kind) => (
+              <label
+                key={kind}
+                title={kind === "image" ? "tuck in a photo" : "tuck in a little video"}
+                className="w-8 h-8 rounded-full hover:bg-cream/80 flex items-center justify-center text-lg cursor-pointer transition-colors"
+              >
+                {kind === "image" ? "📷" : "🎬"}
+                <input
+                  type="file"
+                  accept={`${kind}/*`}
+                  className="hidden"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0] ?? null;
+                    e.target.value = "";
+                    if (f && f.size > 4 * 1024 * 1024) {
+                      setError("that file is a bit heavy — keep it under 4MB ♡");
+                      return;
+                    }
+                    setError("");
+                    pickMedia(f);
+                  }}
+                />
+              </label>
+            ))}
+            <button
+              onClick={() => setSongModal(true)}
+              title="tuck in a song"
+              className="w-8 h-8 rounded-full hover:bg-cream/80 flex items-center justify-center text-lg cursor-pointer transition-colors"
+            >
+              🎵
+            </button>
+            <span className="text-ink-soft/60 text-xs ml-1">sealed until it blooms</span>
+          </div>
         </div>
       </div>
+
+      <SongModal open={songModal} onPick={setSong} onClose={() => setSongModal(false)} />
 
       <div className="text-left">
         <span className="hand text-xl text-ink">how long should it take to bloom?</span>
