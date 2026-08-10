@@ -1,10 +1,12 @@
 import { PlantForm } from "@/components/PlantForm";
+import { BackLink } from "@/components/BackLink";
 
 /* eslint-disable @next/next/no-img-element */
 
 export default function PlantPage() {
   return (
     <main className="flex-1 flex flex-col items-center px-6 py-14 text-center">
+      <BackLink />
       <h1 className="rise hand text-ink text-4xl sm:text-5xl mb-8">plant a seed</h1>
 
       {/* the form sits on a garden card — paper on the grass, a butterfly

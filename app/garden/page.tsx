@@ -2,6 +2,7 @@ import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase";
 import type { Flower } from "@/lib/seed";
 import { plantWidth } from "@/components/Plant";
+import { BackLink } from "@/components/BackLink";
 
 /* eslint-disable @next/next/no-img-element */
 
@@ -27,6 +28,7 @@ export default async function GardenPage() {
 
   return (
     <main className="flex-1 flex flex-col items-center px-6 py-14 text-center">
+      <BackLink />
       <h1 className="rise hand text-ink text-4xl sm:text-6xl" style={{ textShadow: "0 1px 10px rgba(246,239,223,0.7)" }}>
         the garden
       </h1>
