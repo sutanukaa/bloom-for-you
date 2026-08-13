@@ -11,7 +11,10 @@ export function AmbienceToggle() {
 
   useEffect(() => {
     if (!isAmbienceOn()) return;
-    const resume = () => {
+    const resume = (e: PointerEvent) => {
+      // tapping the chime button itself is handled by toggle(); if we also
+      // start here, the following click immediately stops it again
+      if ((e.target as Element | null)?.closest?.("[data-ambience-toggle]")) return;
       startAmbience();
       setOn(true);
     };
@@ -33,6 +36,7 @@ export function AmbienceToggle() {
 
   return (
     <button
+      data-ambience-toggle
       onClick={toggle}
       aria-label={on ? "turn garden sounds off" : "turn garden sounds on"}
       title={on ? "the garden is singing" : "hear the garden"}
