@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { startAmbience, stopAmbience, isAmbienceOn } from "@/lib/ambience";
+import { startAmbience, stopAmbience, isAmbienceOn, ambienceRunning } from "@/lib/ambience";
 
 // Wind-chime button (bottom-right): toggles the garden's wind + birdsong.
 // Audio can only start on a user gesture, so if it was left on last visit we
@@ -20,9 +20,15 @@ export function AmbienceToggle() {
   }, []);
 
   function toggle() {
-    if (on) stopAmbience();
-    else startAmbience();
-    setOn(!on);
+    // check the actual audio state, not React state — the pointerdown resume
+    // listener may have just started it in this same click
+    if (ambienceRunning()) {
+      stopAmbience();
+      setOn(false);
+    } else {
+      startAmbience();
+      setOn(true);
+    }
   }
 
   return (

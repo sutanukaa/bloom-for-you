@@ -8,7 +8,8 @@ let birdTimer: ReturnType<typeof setTimeout> | null = null;
 let running = false;
 
 export function isAmbienceOn(): boolean {
-  return typeof window !== "undefined" && localStorage.getItem("bloom-ambience") === "1";
+  // on by default — only stays off if the user explicitly muted
+  return typeof window !== "undefined" && localStorage.getItem("bloom-ambience") !== "0";
 }
 
 export function ambienceRunning(): boolean {
